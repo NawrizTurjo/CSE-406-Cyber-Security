@@ -1,14 +1,27 @@
 import importlib
 aes_mod = importlib.import_module("2105032_AES")
 
+def derive_aes_key(s: int) -> bytes:
+
+    num_bytes = max (1, (s.bit_length() + 7) // 8) # ceiling to need bytes
+    s_bytes = s.to_bytes(num_bytes, byteorder='big')
+
+    if len(s_bytes) >= 16:
+        return s_bytes[-16:]
+    else:
+        pad_len = 16 - num_bytes
+        padding = b'\x00' * pad_len
+        return padding + s_bytes
+
 def encrypt_image_bonus(input_bmp_path, key_bytes):
     # ইমেজটি বাইনারি মোডে রিড করা
     with open(input_bmp_path, "rb") as f:
         full_image_bytes = f.read()
         
-    # BMP হেডার (প্রথম ৫৪ বাইট) আলাদা করা
-    header = full_image_bytes[:54]
-    pixel_data = full_image_bytes[54:]
+    # BMP হেডার আলাদা করা (ডাইনামিকালি bfOffBits অফসেট ব্যবহার করে, কারণ ৩২-বিট BMP এর হেডার সাইজ আলাদা হতে পারে)
+    offset = int.from_bytes(full_image_bytes[10:14], 'little')
+    header = full_image_bytes[:offset]
+    pixel_data = full_image_bytes[offset:]
     
     # ১. ECB মোডে পিক্সেল ডেটা এনক্রিপ্ট করা
     print("[ECB] Encrypting image pixels...")
@@ -28,5 +41,15 @@ def encrypt_image_bonus(input_bmp_path, key_bytes):
         
     print("[SUCCESS] ECB and CBC images generated successfully.")
 
-# টেস্ট করার জন্য ড্রাইভার:
-encrypt_image_bonus("test_64x64.bmp", b"BUET CSE20 Batch")
+
+
+def main():
+    image_path = input("Enter BMP image path: ").strip()
+
+    shared_secret = int(input("Enter shared secret: "))
+    key_bytes = derive_aes_key(shared_secret)
+
+    encrypt_image_bonus(image_path, key_bytes)
+
+if __name__ == "__main__":
+    main()

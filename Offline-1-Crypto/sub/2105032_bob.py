@@ -7,8 +7,26 @@ dh_mod = importlib.import_module("2105032_dh")
 aes_mod = importlib.import_module("2105032_AES")
 
 def derive_aes_key(s: int) -> bytes:
-    s_bytes = s.to_bytes((s.bit_length() + 7) // 8 or 1, byteorder='big')
-    return s_bytes[-16:] if len(s_bytes) >= 16 else s_bytes.rjust(16, b'\x00')
+
+    num_bytes = max (1, (s.bit_length() + 7) // 8) # ceiling to need bytes
+    s_bytes = s.to_bytes(num_bytes, byteorder='big')
+
+    if len(s_bytes) >= 16:
+        return s_bytes[-16:]
+    else:
+        pad_len = 16 - num_bytes
+        padding = b'\x00' * pad_len
+        return padding + s_bytes
+
+def recv_all(sock, length):
+    buf = bytearray()
+    while len(buf) < length:
+        chunk = sock.recv(min(4096, length - len(buf)))
+        if not chunk:
+            raise ConnectionError("Socket closed before all data received")
+        buf.extend(chunk)
+    return bytes(buf)
+
 
 def receive_file_bonus(conn, aes_key):
     # মেটাডেটা রিসিভ করা
@@ -20,11 +38,7 @@ def receive_file_bonus(conn, aes_key):
     conn.send(b"ACK")
     
     # সম্পূর্ণ সাইফারটেক্সট বাফারিং করে রিড করা
-    ciphertext = bytearray()
-    while len(ciphertext) < cipher_len:
-        packet = conn.recv(4096)
-        if not packet: break
-        ciphertext.extend(packet)
+    ciphertext = recv_all(conn, cipher_len)
         
     # AES-CBC মোডে ডিক্রিপ্ট করা
     print(f"[AES] Decrypting arbitrary file: {file_name}")
@@ -78,21 +92,56 @@ def run_bob():
     # অ্যালিসকে সিগন্যাল পাঠানো যে বব প্রস্তুত
     conn.send("READY".encode('ascii'))
     
-    # ৫. সকেট থেকে এনক্রিপ্টেড সাইফারটেক্সট বাইট রিসিভ করা
-    print("[Socket] Waiting for ciphered text stream from Alice...")
-    ciphertext = conn.recv(4096)
+    # # ৫. সকেট থেকে এনক্রিপ্টেড সাইফারটেক্সট বাইট রিসিভ করা
+    # print("[Socket] Waiting for ciphered text stream from Alice...")
+    # header = conn.recv(64).decode('ascii')
+    # ct_len = int(header.rstrip('|').split('|')[0])
+    # conn.send(b"OK")
+
+    # ciphertext = recv_all(conn, ct_len)
     
-    if ciphertext:
-        print(f"[AES] Ciphertext received (HEX): {aes_mod.bytes_to_hex_str(ciphertext)}")
+    # if ciphertext:
+    #     print(f"[AES] Ciphertext received (HEX): {aes_mod.bytes_to_hex_str(ciphertext)}")
         
-        # ৬. AES-CBC মোডে ডিক্রিপ্ট করা
-        print("[AES] Decrypting and unpadding message...")
-        decrypted_plain_bytes = aes_mod.aes_decrypt_cbc(ciphertext, aes_key)
+    #     # ৬. AES-CBC মোডে ডিক্রিপ্ট করা
+    #     print("[AES] Decrypting and unpadding message...")
+    #     decrypted_plain_bytes = aes_mod.aes_decrypt_cbc(ciphertext, aes_key)
         
+    #     print("\n--- TRANSMISSION SUCCESS ---")
+    #     print(f"Recovered Text (ASCII): {decrypted_plain_bytes.decode('utf-8')}")
+    #     print(f"Recovered Text (HEX)  : {aes_mod.bytes_to_hex_str(decrypted_plain_bytes)}")
+        
+    # conn.close()
+    # server_socket.close()
+
+    # ৫. Unified recv
+    print("[Socket] Waiting for transmission...")
+    
+    # Header: TYPE(4) + NAMELEN(4) + NAME + CTLEN(10)
+    type_bytes = conn.recv(4)
+    msg_type = type_bytes.decode('ascii')
+    
+    name_len = int.from_bytes(conn.recv(4), 'big')
+    filename = conn.recv(name_len).decode('utf-8') if name_len > 0 else ""
+    ct_len = int.from_bytes(recv_all(conn, 10), 'big')
+    conn.send(b"ACK_")
+    
+    ciphertext = recv_all(conn, ct_len)
+    print(f"[AES] CT (HEX): {aes_mod.bytes_to_hex_str(ciphertext)}")
+    
+    decrypted = aes_mod.aes_decrypt_cbc(ciphertext, aes_key)
+    
+    if msg_type == "TEXT":
         print("\n--- TRANSMISSION SUCCESS ---")
-        print(f"Recovered Text (ASCII): {decrypted_plain_bytes.decode('utf-8')}")
-        print(f"Recovered Text (HEX)  : {aes_mod.bytes_to_hex_str(decrypted_plain_bytes)}")
-        
+        print(f"Recovered Text (ASCII): {decrypted.decode('utf-8')}")
+        print(f"Recovered Text (HEX)  : {aes_mod.bytes_to_hex_str(decrypted)}")
+    else:
+        out_name = "received_" + filename
+        with open(out_name, "wb") as f:
+            f.write(decrypted)
+        print(f"\n--- TRANSMISSION SUCCESS ---")
+        print(f"File saved: '{out_name}' ({len(decrypted)} bytes)")
+    
     conn.close()
     server_socket.close()
 
