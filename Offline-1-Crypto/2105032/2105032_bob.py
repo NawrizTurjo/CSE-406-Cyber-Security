@@ -1,8 +1,8 @@
 import socket
 import importlib
 import random
+import time
 
-# মডিউল ডাইনামিক ইম্পোর্ট
 dh_mod = importlib.import_module("2105032_dh")
 aes_mod = importlib.import_module("2105032_AES")
 
@@ -27,34 +27,10 @@ def recv_all(sock, length):
         buf.extend(chunk)
     return bytes(buf)
 
-
-def receive_file_bonus(conn, aes_key):
-    # মেটাডেটা রিসিভ করা
-    metadata = conn.recv(1024).decode('ascii')
-    file_name, cipher_len = metadata.split(':')
-    cipher_len = int(cipher_len)
-    
-    # অ্যাকনলেজমেন্ট পাঠানো
-    conn.send(b"ACK")
-    
-    # সম্পূর্ণ সাইফারটেক্সট বাফারিং করে রিড করা
-    ciphertext = recv_all(conn, cipher_len)
-        
-    # AES-CBC মোডে ডিক্রিপ্ট করা
-    print(f"[AES] Decrypting arbitrary file: {file_name}")
-    decrypted_file_bytes = aes_mod.aes_decrypt_cbc(bytes(ciphertext), aes_key)
-    
-    # রিসিভড ফাইলটি ডিস্কে সেভ করা
-    out_name = "received_" + file_name
-    with open(out_name, "wb") as f:
-        f.write(decrypted_file_bytes)
-    print(f"[TRANSMISSION SUCCESS] File saved as '{out_name}'")
-
 def run_bob():
     host = '127.0.0.1'
     port = 65432
     
-    # সার্ভার সকেট সেটআপ
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((host, port))
@@ -66,7 +42,6 @@ def run_bob():
     conn, addr = server_socket.accept()
     print(f"[Socket] Connected by Alice from {addr}")
     
-    # ১. অ্যালিসের কাছ থেকে DH প্যারামিটার ও পাবলিক কী A গ্রহণ করা
     data = conn.recv(4096).decode('ascii')
     P_str, g_str, A_str = data.split(',')
     P = int(P_str)
@@ -77,51 +52,23 @@ def run_bob():
     print(f"g = {g}")
     print(f"g^K_a = {A}")
     
-    # ২. ববের নিজের প্রাইভেট কী ও পাবলিক কী B তৈরি
     k_bits = 128
     K_b = random.randint(2**(k_bits - 1), P - 2)
     B = pow(g, K_b, P)
     
-    # ৩. অ্যালিসকে পাবলিক কী B পাঠানো
     print("[DH] Sending Public Key B to Alice...")
     print(f"g^K_b = {B}")
     conn.send(str(B).encode('ascii'))
     
-    # ৪. শেয়ার্ড সিক্রেট ও AES কী ডিরাইভ করা
     s = pow(A, K_b, P)
     aes_key = derive_aes_key(s)
     print(f"[Key derived] Shared Secret computed successfully.")
     print(f"Derived AES Key (HEX): {aes_mod.bytes_to_hex_str(aes_key)}\n")
     
-    # অ্যালিসকে সিগন্যাল পাঠানো যে বব প্রস্তুত
     conn.send("READY".encode('ascii'))
-    
-    # # ৫. সকেট থেকে এনক্রিপ্টেড সাইফারটেক্সট বাইট রিসিভ করা
-    # print("[Socket] Waiting for ciphered text stream from Alice...")
-    # header = conn.recv(64).decode('ascii')
-    # ct_len = int(header.rstrip('|').split('|')[0])
-    # conn.send(b"OK")
 
-    # ciphertext = recv_all(conn, ct_len)
-    
-    # if ciphertext:
-    #     print(f"[AES] Ciphertext received (HEX): {aes_mod.bytes_to_hex_str(ciphertext)}")
-        
-    #     # ৬. AES-CBC মোডে ডিক্রিপ্ট করা
-    #     print("[AES] Decrypting and unpadding message...")
-    #     decrypted_plain_bytes = aes_mod.aes_decrypt_cbc(ciphertext, aes_key)
-        
-    #     print("\n--- TRANSMISSION SUCCESS ---")
-    #     print(f"Recovered Text (ASCII): {decrypted_plain_bytes.decode('utf-8')}")
-    #     print(f"Recovered Text (HEX)  : {aes_mod.bytes_to_hex_str(decrypted_plain_bytes)}")
-        
-    # conn.close()
-    # server_socket.close()
-
-    # ৫. Unified recv
     print("[Socket] Waiting for transmission...")
     
-    # Header: TYPE(4) + NAMELEN(4) + NAME + CTLEN(10)
     type_bytes = conn.recv(4)
     msg_type = type_bytes.decode('ascii')
     
@@ -131,14 +78,18 @@ def run_bob():
     conn.send(b"ACK_")
     
     ciphertext = recv_all(conn, ct_len)
-    print(f"[AES] CT (HEX): {aes_mod.bytes_to_hex_str(ciphertext)}")
+    print(f"[AES] CT (HEX Truncated): {aes_mod.bytes_to_hex_str(ciphertext[:32])} ...")
     
+    time_s = time.perf_counter()
     decrypted = aes_mod.aes_decrypt_cbc(ciphertext, aes_key)
+    decryption_time = (time.perf_counter() - time_s) * 1000
+    
+    print(f"Decryption Time: {decryption_time}")
     
     if msg_type == "TEXT":
         print("\n--- TRANSMISSION SUCCESS ---")
         print(f"Recovered Text (ASCII): {decrypted.decode('utf-8')}")
-        print(f"Recovered Text (HEX)  : {aes_mod.bytes_to_hex_str(decrypted)}")
+        print(f"Recovered Text (HEX Truncated)  : {aes_mod.bytes_to_hex_str(decrypted[:32])} ...")
     else:
         out_name = "received_" + filename
         with open(out_name, "wb") as f:

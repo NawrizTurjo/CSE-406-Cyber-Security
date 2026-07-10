@@ -73,12 +73,16 @@ def run_alice():
     # ৩. কী এক্সচেঞ্জ ফেস: P, g, A কমা দিয়ে সেপারেট করে পাঠানো
     dh_payload = f"{P},{g},{A}"
     print("[DH] Sending P, g, and Public Key A to Bob...")
+    print(f"P = {P}")
+    print(f"g = {g}")
+    print(f"g^K_a = {A}")
     client_socket.send(dh_payload.encode('ascii'))
     
     # ৪. ববের পাবলিক কী B রিসিভ করা
     response = client_socket.recv(4096).decode('ascii')
     B = int(response)
     print(f"[DH] Received Public Key B from Bob.")
+    print(f"g^K_b = {B}")
     
     # ৫. শেয়ার্ড সিক্রেট ও AES কী ডিরাইভ করা
     s = pow(B, K_a, P)

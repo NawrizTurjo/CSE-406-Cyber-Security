@@ -414,7 +414,7 @@ def aes_decrypt_cbc(ciphertext: bytes, key: bytes) -> bytes:
 
 # --- ৭. উন্নত টেস্ট ড্রাইভার (ECB & CBC for 128, 192, 256 bits) ---
 if __name__ == "__main__":
-    plaintext_ascii = "We need picnic to celebrate our crypto system success!"
+    plaintext_ascii = "We need picnic"
     plaintext_bytes = plaintext_ascii.encode('utf-8')
     
     # ৩টি ভিন্ন সাইজের টেস্ট কী (১৬, ২৪ এবং ৩২ বাইট)
@@ -456,11 +456,18 @@ if __name__ == "__main__":
         
         print(f"Ciphertext (HEX): {bytes_to_hex_str(ct_ecb[:32])} ... [Truncated]")
         print(f"Decrypted Text  : {dt_ecb.decode('utf-8')}")
-        print(f"Execution Times : Key Schedule: {ks_time:.4f}ms | Encrypt: {enc_time:.4f}ms | Decrypt: {dec_time:.4f}ms")
+        # print(f"Execution Times : Key Schedule: {ks_time:.4f}ms | Encrypt: {enc_time:.4f}ms | Decrypt: {dec_time:.4f}ms")
+        print(f" Key Schedule time: {ks_time}")
+        print(f" Encryption time: {enc_time}")
+        print(f" Decryption time: {dec_time}")
         print(f"Sanity Check    : {'✔️ MATCHED' if dt_ecb == plaintext_bytes else '❌ MISMATCH'}\n")
         
         # ----------------------------- CBC MODE TEST -----------------------------
         print(f"--- [{name} / CBC Mode] ---")
+        start_ks = time.perf_counter()
+        round_keys, num_rounds = key_expansion(key)
+        ks_time = (time.perf_counter() - start_ks) * 1000
+        
         start_enc = time.perf_counter()
         ct_cbc = aes_encrypt_cbc(plaintext_bytes, key)
         enc_time = (time.perf_counter() - start_enc) * 1000
@@ -471,7 +478,10 @@ if __name__ == "__main__":
         
         print(f"Ciphertext (HEX): {bytes_to_hex_str(ct_cbc[:32])} ... [Truncated]")
         print(f"Decrypted Text  : {dt_cbc.decode('utf-8')}")
-        print(f"Execution Times : Encrypt (with IV): {enc_time:.4f}ms | Decrypt: {dec_time:.4f}ms")
+        # print(f"Execution Times : Key Schedule: {ks_time:.4f}ms | Encrypt: {enc_time:.4f}ms | Decrypt: {dec_time:.4f}ms")
+        print(f" Key Schedule time: {ks_time}")
+        print(f" Encryption time: {enc_time}")
+        print(f" Decryption time: {dec_time}")
         print(f"Sanity Check    : {'✔️ MATCHED' if dt_cbc == plaintext_bytes else '❌ MISMATCH'}\n")
         
     print("============================================================")

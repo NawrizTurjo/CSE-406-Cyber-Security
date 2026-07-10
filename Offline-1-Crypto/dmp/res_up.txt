@@ -1,0 +1,327 @@
+## Task-1 and Bonus Task-3
+
+python .\2105032_AES.py 
+Original Plaintext: We need picnic
+Plaintext (HEX)   : 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+============================================================
+                         AES-128
+============================================================
+=============== [AES-128 / ECB] ===============
+
+Key:
+In ASCII: BUET CSE20 Batch
+In HEX  : 42 55 45 54 20 43 53 45 32 30 20 42 61 74 63 68
+
+Plain Text:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+In ASCII (After Padding): We need picnic
+In HEX (After Padding): 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+
+Ciphered Text:
+In HEX: 61 0A DA 11 D5 42 E3 79 82 57 EC BD 9D 18 7A 6A
+In ASCII: a
+ÚÕBãyWì½zj
+
+Deciphered Text:
+Before Unpadding:
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+In ASCII: We need picnic
+After Unpadding:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+Execution Time Details:
+Key Schedule Time: 0.058499997976468876
+Encryption Time: 0.1480999999330379
+Decryption Time: 0.13630000103148632
+
+=============== [AES-128 / CBC] ===============
+
+Key:
+In ASCII: BUET CSE20 Batch
+In HEX  : 42 55 45 54 20 43 53 45 32 30 20 42 61 74 63 68
+
+Plain Text:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+In ASCII (After Padding): We need picnic
+In HEX (After Padding): 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+
+Ciphered Text:
+(IV is the first 16 bytes, followed by the actual ciphertext)
+In HEX: 0C F9 06 C3 78 55 1B DB 22 D5 FE 3A FF 71 AD DC 8D F2 FA B4 C0 71 1C F8 CC 41 98 8E F8 78 19 BC
+In ASCII:
+ùÃxU"Õþ:ÿq­Üòú´ÀqøÌAøx¼
+
+Deciphered Text:
+Before Unpadding:
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+In ASCII: We need picnic
+After Unpadding:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+Execution Time Details:
+Key Schedule Time: 0.053099996875971556
+Encryption Time: 0.20470000163186342
+Decryption Time: 0.13939999917056412
+============================================================
+                         AES-192
+============================================================
+=============== [AES-192 / ECB] ===============
+
+Key:
+In ASCII: BUET CSE20 Batch 192BitK
+In HEX  : 42 55 45 54 20 43 53 45 32 30 20 42 61 74 63 68 20 31 39 32 42 69 74 4B
+
+Plain Text:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+In ASCII (After Padding): We need picnic
+In HEX (After Padding): 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+
+Ciphered Text:
+In HEX: DF B1 3F 38 9A 44 60 03 11 35 9D 82 87 B4 C3 A6
+In ASCII: ß±?8D`5´Ã¦
+
+Deciphered Text:
+Before Unpadding:
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+In ASCII: We need picnic
+After Unpadding:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+Execution Time Details:
+Key Schedule Time: 0.07499999992433004
+Encryption Time: 0.3963000017392915
+Decryption Time: 0.26670000079320744
+
+=============== [AES-192 / CBC] ===============
+
+Key:
+In ASCII: BUET CSE20 Batch 192BitK
+In HEX  : 42 55 45 54 20 43 53 45 32 30 20 42 61 74 63 68 20 31 39 32 42 69 74 4B
+
+Plain Text:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+In ASCII (After Padding): We need picnic
+In HEX (After Padding): 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+
+Ciphered Text:
+(IV is the first 16 bytes, followed by the actual ciphertext)
+In HEX: BA CB 3A 0A 4A 90 A3 4C BB 89 6B 11 3D F0 18 C8 51 16 04 3C 0D 87 74 E5 D0 A2 6D A5 E4 AD 57 F3
+In ASCII: ºË:
+tåÐ¢m¥ä­Wó
+
+Deciphered Text:
+Before Unpadding:
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+In ASCII: We need picnic
+After Unpadding:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+Execution Time Details:
+Key Schedule Time: 0.23220000002766028
+Encryption Time: 0.36759999784408137
+Decryption Time: 0.4847000018344261
+============================================================
+                         AES-256
+============================================================
+=============== [AES-256 / ECB] ===============
+
+Key:
+In ASCII: BUET CSE20 Batch 256BitKeySecure
+In HEX  : 42 55 45 54 20 43 53 45 32 30 20 42 61 74 63 68 20 32 35 36 42 69 74 4B 65 79 53 65 63 75 72 65
+
+Plain Text:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+In ASCII (After Padding): We need picnic
+In HEX (After Padding): 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+
+Ciphered Text:
+In HEX: 28 20 85 E3 5E 88 27 9B 81 37 84 F1 66 67 ED 33
+In ASCII: ( ã^'7ñfgí3
+
+Deciphered Text:
+Before Unpadding:
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+In ASCII: We need picnic
+After Unpadding:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+Execution Time Details:
+Key Schedule Time: 0.07360000017797574
+Encryption Time: 0.36499999987427145
+Decryption Time: 0.8315999984915834
+
+=============== [AES-256 / CBC] ===============
+
+Key:
+In ASCII: BUET CSE20 Batch 256BitKeySecure
+In HEX  : 42 55 45 54 20 43 53 45 32 30 20 42 61 74 63 68 20 32 35 36 42 69 74 4B 65 79 53 65 63 75 72 65
+
+Plain Text:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+In ASCII (After Padding): We need picnic
+In HEX (After Padding): 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+
+Ciphered Text:
+(IV is the first 16 bytes, followed by the actual ciphertext)
+In HEX: 75 B8 68 65 0E 1B 79 0F 5C 04 4B 0F 81 C1 CB 8F FF 29 2F 0E 0E A3 D4 28 07 52 66 5D C7 0C 18 6E
+In ASCII: u¸he\KÁËÿ)/£Ô(Rf]Ç
+n
+
+Deciphered Text:
+Before Unpadding:
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63 02 02
+In ASCII: We need picnic
+After Unpadding:
+In ASCII: We need picnic
+In HEX: 57 65 20 6E 65 65 64 20 70 69 63 6E 69 63
+
+Execution Time Details:
+Key Schedule Time: 0.06779999966965988
+Encryption Time: 1.755000001139706
+Decryption Time: 0.31519999902229756
+
+## Task-2
+
+python .\2105032_dh.py
+=================================================================
+          Diffie-Hellman Performance Report
+=================================================================
+
+k (bits)   | Time A (ms)     | Time B (ms)     | Time s (ms)
+--------------------------------------------------------------
+128        | 0.0365          | 0.0352          | 0.0695
+192        | 0.0766          | 0.0744          | 0.1654
+256        | 0.1301          | 0.1284          | 0.2553
+
+[SUCCESS] Diffie-Hellman key exchange verified and complete.
+
+## Task-3
+
+python .\2105032_alice.py
+==================== ALICE (SENDER) ====================
+
+[DH] Generating 128-bit parameters...
+[Socket] Connecting to Bob at 127.0.0.1:65432...
+[DH] Sending P, g, and Public Key A to Bob...
+P = 189530221798680811547742272344927516859
+g = 69705871134108089328336095898945924657
+A (g^K_a mod P) = 48334015301037956386228330322277303925
+[DH] Received Public Key B from Bob.
+B (g^K_b mod P) = 68641668205714669438828173564774741686
+[Key Derived] Shared Secret computed successfully.
+  Derived AES Key (HEX): 71 92 5E 43 23 39 16 30 4A 0C 71 A8 AC 39 2D 2C
+
+[Status] Bob is READY for transmission.
+
+Send: (1) Text  (2) File: 1
+Enter plaintext: Save me from the nothing I've become....
+
+[AES] Encrypting using CBC mode...
+Encryption time: 0.8206999991671182 ms
+[Socket] Sending structured protocol header...
+[Socket] Streaming encrypted payload...
+
+[SUCCESS] TEXT transmitted successfully!
+Sent Ciphertext (HEX Truncated): 0C 5F 08 18 20 D7 E1 07 EA 27 66 83 B9 3F 48 BF 9B B9 1F 82 27 3F AE AC D5 1C 91 05 A6 72 1E B6 ...
+[Status] Connection safely closed.
+
+python .\2105032_bob.py
+==================== BOB (RECEIVER / SERVER) ====================
+[Socket] Waiting for Alice to connect on port 65432...
+
+[Socket] Connected by Alice from ('127.0.0.1', 65453)
+[DH] Received P, g, and Public Key A from Alice.
+P = 189530221798680811547742272344927516859
+g = 69705871134108089328336095898945924657
+g^K_a = 48334015301037956386228330322277303925
+[DH] Sending Public Key B to Alice...
+g^K_b = 68641668205714669438828173564774741686
+[Key derived] Shared Secret computed successfully.
+Derived AES Key (HEX): 71 92 5E 43 23 39 16 30 4A 0C 71 A8 AC 39 2D 2C
+
+[Socket] Waiting for transmission...
+[AES] CT (HEX Truncated): 0C 5F 08 18 20 D7 E1 07 EA 27 66 83 B9 3F 48 BF 9B B9 1F 82 27 3F AE AC D5 1C 91 05 A6 72 1E B6 ...
+Decryption Time: 1.1869999980262946
+
+--- TRANSMISSION SUCCESS ---
+Recovered Text (ASCII): Save me from the nothing I've become....
+Recovered Text (HEX Truncated)  : 53 61 76 65 20 6D 65 20 66 72 6F 6D 20 74 68 65 20 6E 6F 74 68 69 6E 67 20 49 27 76 65 20 62 65 ...
+
+## Bonus Task-1
+
+python .\2105032_image.py
+Enter BMP image path: E:\4-1 Course Works\CSE-406-Cyber-Security\Offline-1-Crypto\sub\BUET_logo_256px_color.bmp
+Enter shared secret: Erling Haaland
+[ECB] Encrypting image pixels...
+[CBC] Encrypting image pixels...
+[SUCCESS] ECB and CBC images generated successfully.
+ECB encryption time: 1291.08 ms
+CBC encryption time: 1327.55 ms
+
+## Bonus Task-2
+
+python .\2105032_alice.py
+==================== ALICE (SENDER) ====================
+
+[DH] Generating 128-bit parameters...
+[Socket] Connecting to Bob at 127.0.0.1:65432...
+[DH] Sending P, g, and Public Key A to Bob...
+P = 189530221798680811547742272344927516859
+g = 69705871134108089328336095898945924657
+A (g^K_a mod P) = 48334015301037956386228330322277303925
+[DH] Received Public Key B from Bob.
+B (g^K_b mod P) = 68641668205714669438828173564774741686
+[Key Derived] Shared Secret computed successfully.
+  Derived AES Key (HEX): 71 92 5E 43 23 39 16 30 4A 0C 71 A8 AC 39 2D 2C
+
+[Status] Bob is READY for transmission.
+
+Send: (1) Text  (2) File: 2
+Enter file path: E:\4-1 Course Works\CSE-406-Cyber-Security\Offline-1-Crypto\res\CSE406_Assignment_v2.pdf
+
+[AES] Encrypting using CBC mode...
+Encryption time: 1257.65870000032 ms
+[Local] Encrypted payload saved as 'encrypted_CSE406_Assignment_v2.pdf'
+[Socket] Sending structured protocol header...
+[Socket] Streaming encrypted payload...
+
+[SUCCESS] FILE transmitted successfully!
+Sent Ciphertext (HEX Truncated): B4 C3 C3 96 51 C6 53 AB A9 2E C8 77 52 5D EE 71 2B 48 B7 B5 FC 0F 37 67 F4 3D AD CD A6 96 CB 63 ...
+[Status] Connection safely closed.
+
+python .\2105032_bob.py
+==================== BOB (RECEIVER / SERVER) ====================
+[Socket] Waiting for Alice to connect on port 65432...
+
+[Socket] Connected by Alice from ('127.0.0.1', 59057)
+[DH] Received P, g, and Public Key A from Alice.
+P = 189530221798680811547742272344927516859
+g = 69705871134108089328336095898945924657
+g^K_a = 48334015301037956386228330322277303925
+[DH] Sending Public Key B to Alice...
+g^K_b = 68641668205714669438828173564774741686
+[Key derived] Shared Secret computed successfully.
+Derived AES Key (HEX): 71 92 5E 43 23 39 16 30 4A 0C 71 A8 AC 39 2D 2C
+
+[Socket] Waiting for transmission...
+[AES] CT (HEX Truncated): B4 C3 C3 96 51 C6 53 AB A9 2E C8 77 52 5D EE 71 2B 48 B7 B5 FC 0F 37 67 F4 3D AD CD A6 96 CB 63 ...
+Decryption Time: 1468.3944999997038
+
+--- TRANSMISSION SUCCESS ---
+File saved: 'received_CSE406_Assignment_v2.pdf' (247889 bytes)
+
+## Bonus Task-3
+
+included with Task-1

@@ -3,7 +3,7 @@ import random
 import math
 from random import randint
 
-random.seed(42)
+random.seed(2105032)
 
 # algorithm from: https://cp-algorithms.com/algebra/primality_tests.html
 
@@ -52,7 +52,6 @@ def miller_rabin(n, iter=40):
             return False
     
     return True
-
 
 def generate_prime(bit_length):
     """
