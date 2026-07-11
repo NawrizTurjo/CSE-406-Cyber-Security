@@ -2,3 +2,4 @@
 !.gitignore
 raw/
 __pycache__/
+*_evaluator_*
