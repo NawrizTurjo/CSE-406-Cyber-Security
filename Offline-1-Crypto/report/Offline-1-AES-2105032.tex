@@ -2,7 +2,7 @@
 
 % --- Packages ---
 \usepackage[utf8]{inputenc}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=1in, top=0.9in, bottom=0.9in]{geometry}
 \usepackage{amsmath, amssymb, amsfonts, amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -11,25 +11,30 @@
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{setspace}
-\usepackage{tcolorbox}
+\usepackage[most]{tcolorbox}
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage{tabularx}
 \usepackage{microtype}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, calc, positioning}
+\usepackage{enumitem}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{colortbl}
 
 % --- Typography (Palatino Serif + Helvetica Sans + Courier Monospace) ---
 \usepackage[sc]{mathpazo}
 \usepackage[scaled=0.95]{helvet}
 \usepackage{courier}
+\renewcommand{\familydefault}{\rmdefault}
 
 % --- Custom Tabularx Column Types ---
 \newcolumntype{C}{>{\centering\arraybackslash}X}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcolumntype{R}{>{\raggedleft\arraybackslash}X}
 
-% --- Color Palette (Corporate Blue Theme) ---
+% --- Color Palette (Refined Corporate Blue Theme) ---
 \definecolor{NavyBlue}{RGB}{11, 47, 100}
 \definecolor{SlateGray}{RGB}{70, 80, 95}
 \definecolor{TealAccent}{RGB}{0, 102, 102}
@@ -37,25 +42,29 @@
 \definecolor{CodeGreen}{RGB}{0, 120, 0}
 \definecolor{CodePurple}{RGB}{128, 0, 128}
 \definecolor{Charcoal}{RGB}{34, 34, 34}
+\definecolor{TableAccent}{RGB}{235, 240, 248}
+\definecolor{BoxTitle}{RGB}{8, 38, 80}
+\definecolor{LightRule}{RGB}{200, 210, 220}
 
 % --- Custom Page Layout ---
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\color{SlateGray}\small CSE 406: Cyber Security Sessional --- Assignment 1}
-\fancyhead[R]{\color{SlateGray}\small Student ID: 2105032}
+\fancyhead[L]{\color{SlateGray}\small\textsc{CSE 406: Cyber Security Sessional --- Assignment 1}}
+\fancyhead[R]{\color{SlateGray}\small\textsc{Student ID: 2105032}}
 \fancyfoot[C]{\color{SlateGray}\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{LightRule}\leaders\hrule height0.5pt\hfill}}
 \renewcommand{\footrulewidth}{0pt}
 
 % --- Section Styling ---
 \titleformat{\section}
-  {\color{NavyBlue}\normalfont\Large\bfseries}
-  {\thesection}{1em}{}[\titlerule]
+  {\color{NavyBlue}\normalfont\LARGE\bfseries\sffamily}
+  {\thesection}{1em}{}[\vspace{-0.3em}\color{NavyBlue}\rule{\textwidth}{0.8pt}]
 \titleformat{\subsection}
-  {\color{NavyBlue}\normalfont\large\bfseries}
+  {\color{NavyBlue}\normalfont\Large\bfseries\sffamily}
   {\thesubsection}{1em}{}
 \titleformat{\subsubsection}
-  {\color{NavyBlue}\normalfont\normalsize\bfseries}
+  {\color{SlateGray}\normalfont\large\bfseries\sffamily}
   {\thesubsubsection}{1em}{}
 
 % --- Code Listing Styling ---
@@ -65,21 +74,25 @@
     keywordstyle=\color{NavyBlue}\bfseries,
     numberstyle=\tiny\color{SlateGray},
     stringstyle=\color{CodePurple},
-    basicstyle=\ttfamily\footnotesize\color{Charcoal},
+    basicstyle=\ttfamily\small\color{Charcoal},
     breakatwhitespace=false,         
     breaklines=true,                 
     captionpos=b,                    
     keepspaces=true,                 
     numbers=left,                    
-    numbersep=8pt,                  
+    numbersep=6pt,                  
     showspaces=false,                
     showstringspaces=false,
     showtabs=false,                  
     tabsize=4,
-    frame=single,
-    rulecolor=\color{SlateGray!30},
+    frame=leftline,
+    framerule=1.5pt,
+    rulecolor=\color{NavyBlue!50},
+    xleftmargin=2.5em,
     keywordstyle=[2]\color{TealAccent}\bfseries,
-    keywords=[2]{Sbox,InvSbox,Rcon,Mixer,InvMixer,gf_mult,GF_LUT}
+    keywords=[2]{Sbox,InvSbox,Rcon,Mixer,InvMixer,gf_mult,GF_LUT},
+    aboveskip=1em,
+    belowskip=1em
 }
 \lstset{style=pythonstyle}
 
@@ -89,16 +102,30 @@
     linkcolor=NavyBlue,
     filecolor=TealAccent,      
     urlcolor=TealAccent,
-    citecolor=NavyBlue
+    citecolor=NavyBlue,
+    pdfauthor={Nawriz Ahmed Turjo},
+    pdftitle={Offline-1: AES + Diffie-Hellman Cryptosystem}
 }
 
 % --- Paragraph Formatting ---
-\setstretch{1.15}
-\setlength{\parskip}{0.5em}
+\setstretch{1.12}
+\setlength{\parskip}{0.4em}
 \setlength{\parindent}{0pt}
 
 % --- Custom Math Operators ---
 \DeclareMathOperator{\GF}{GF}
+
+% --- List Formatting ---
+\setlist[enumerate]{leftmargin=*, itemsep=2pt, topsep=4pt}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=4pt}
+
+% --- Caption Formatting ---
+\captionsetup[table]{font={small, sf}, labelfont={bf, color=NavyBlue}, justification=centering, skip=6pt}
+\captionsetup[figure]{font={small, sf}, labelfont={bf, color=NavyBlue}, justification=centering, skip=6pt}
+\captionsetup[lstlisting]{font={small, sf}, labelfont={bf, color=NavyBlue}, justification=centering, skip=6pt}
+
+% --- Table Row Colors ---
+\newcommand{\tablerow}[1]{\rowcolor{TableAccent}}
 
 \begin{document}
 
@@ -109,41 +136,37 @@
     \pagenumbering{Alph}
     \thispagestyle{empty}
     \centering
-    \vspace*{0.2cm}
     
-    \includegraphics[width=2.5cm]{images/BUET_logo_256px_color.png}\\
-    \vspace{0.4cm}
+    \vspace*{1.5cm}
     
-    {\Huge\bfseries\color{NavyBlue} Department of Computer Science and Engineering\\}
-    {\Large\bfseries\color{SlateGray} Bangladesh University of Engineering and Technology (BUET)\\}
+    \includegraphics[width=3cm]{images/BUET_logo_256px_color.png}\\
+    \vspace{0.6cm}
     
-    \vspace{1.0cm}
-    \rule{\linewidth}{1.5pt}
-    \begin{tcolorbox}[colback=NavyBlue!5!white, colframe=NavyBlue, arc=4pt, boxrule=1.5pt, left=15pt, right=15pt, top=15pt, bottom=15pt]
+    {\Huge\bfseries\sffamily\color{NavyBlue} Department of Computer Science and Engineering\\}
+    {\Large\bfseries\sffamily\color{SlateGray} Bangladesh University of Engineering and Technology (BUET)\\}
+    
+    \vspace{1.5cm}
+    
+    \begin{tcolorbox}[colback=NavyBlue!6!white, colframe=NavyBlue, arc=6pt, boxrule=1.5pt, left=20pt, right=20pt, top=18pt, bottom=18pt, enhanced, drop shadow={NavyBlue!20}]
         \centering
-        \vspace{0.2cm}
-        {\Huge\bfseries\color{NavyBlue} Offline-1: AES + Diffie-Hellman Cryptosystem\\}
-        \vspace{0.3cm}
-        {\Large\bfseries\color{SlateGray} Design, Theory, and Performance Analysis of an End-to-End Symmetric-Key Hybrid Cryptosystem\\}
-        \vspace{0.2cm}
+        {\Huge\bfseries\sffamily\color{NavyBlue} Offline-1: AES + Diffie-Hellman Cryptosystem\\[0.4em]}
+        {\Large\bfseries\sffamily\color{SlateGray} Design, Theory, and Performance Analysis of an\\ End-to-End Symmetric-Key Hybrid Cryptosystem\\}
     \end{tcolorbox}
-    \rule{\linewidth}{1.5pt}
     
-    \vspace{1.0cm}
+    \vspace{1.2cm}
     
-    \begin{tabular}{ll}
+    \begin{tabular}{r l}
         \textbf{Course Title:} & CSE 406 --- Cyber Security Sessional \\
         \textbf{Academic Term:} & Level 4, Term 1 (January 2026) \\
         \textbf{Assignment Reference:} & Offline-1 (Cryptography) \\
     \end{tabular}
     
-    \vspace{1.2cm}
+    \vspace{1.5cm}
     
-    \begin{tcolorbox}[colback=LightBG, colframe=SlateGray!40, arc=2pt, boxrule=0.5pt, width=0.6\textwidth]
+    \begin{tcolorbox}[colback=LightBG, colframe=NavyBlue!30, arc=3pt, boxrule=0.8pt, width=0.55\textwidth, enhanced, drop shadow={NavyBlue!10}]
         \centering
-        \textbf{Submitted By:}\\
-        \vspace{0.2cm}
-        {\large\bfseries Nawriz Ahmed Turjo}\\
+        \textbf{\sffamily Submitted By}\\[0.3em]
+        {\large\bfseries\sffamily Nawriz Ahmed Turjo}\\
         Student ID: \textbf{2105032}\\
         Section: A2
     \end{tcolorbox}
@@ -161,6 +184,10 @@
 % =========================================================================
 \tableofcontents
 \newpage
+\listoffigures
+\vspace{1em}
+\listoftables
+\newpage
 \pagenumbering{arabic}
 
 % =========================================================================
@@ -171,8 +198,7 @@ Modern information security relies heavily on \textbf{hybrid cryptosystems} to b
 
 This project details the independent implementation of a secure symmetric-key hybrid cryptosystem from first principles:
 \begin{enumerate}
-    \item \textbf{Diffie-Hellman Key Exchange}: A secure, modular arithmetic key-exchange protocol executed over a TCP socket channel, enabling two untrusted endpoints (\textbf{Alice} and \textbf{Bob}) to establish a shared cryptographic secret.
-    \textbf{Miller-Rabin primality testing} and \textbf{safe prime generators} ensure resistance to discrete logarithm attacks.
+    \item \textbf{Diffie-Hellman Key Exchange}: A secure, modular arithmetic key-exchange protocol executed over a TCP socket channel, enabling two untrusted endpoints (\textbf{Alice} and \textbf{Bob}) to establish a shared cryptographic secret. \textbf{Miller-Rabin primality testing} and \textbf{safe prime generators} ensure resistance to discrete logarithm attacks.
     \item \textbf{Advanced Encryption Standard (AES)}: A symmetric block cipher implementation executing the standard round transformations ($SubBytes$, $ShiftRows$, $MixColumns$, and $AddRoundKey$) in column-major order to achieve strong confusion and diffusion properties.
     \item \textbf{Modes of Operation \& Transport}: Encryption and decryption of multi-block messages in both \textbf{Electronic Codebook (ECB)} and \textbf{Cipher Block Chaining (CBC)} configurations (with proper \textbf{PKCS\#7 padding}), streaming textual payloads and arbitrary binary files over network interfaces.
 \end{enumerate}
@@ -203,9 +229,9 @@ The sequence flow is visualized in Figure~\ref{fig:seq_diag}.
     \centering
     \begin{tikzpicture}[
         node distance = 1.2cm and 2.5cm,
-        box/.style = {draw, fill=LightBG, text width=3cm, align=center, minimum height=0.8cm, rounded corners},
-        line/.style = {draw, -{Latex[scale=1.2]}},
-        dashline/.style = {draw, dashed}
+        box/.style = {draw, fill=LightBG, text width=3cm, align=center, minimum height=0.8cm, rounded corners, font=\sffamily},
+        line/.style = {draw, -{Latex[scale=1.2]}, color=NavyBlue!70},
+        dashline/.style = {draw, dashed, color=SlateGray!50}
     ]
         % Lifelines
         \node (alice_node) [box, fill=NavyBlue!10] {\textbf{Alice (Client)}};
@@ -247,7 +273,7 @@ The sequence flow is visualized in Figure~\ref{fig:seq_diag}.
         \node [right=0.2cm of step6b, text width=4.5cm, align=left] {\small Decrypts payload\\ strip padding};
         
     \end{tikzpicture}
-    \caption{End-to-End Hybrid Cryptosystem Sequence Flow Diagram.}
+    \caption{End-to-end hybrid cryptosystem sequence flow diagram illustrating the Diffie-Hellman key exchange, key derivation, and secure session transmission between Alice and Bob.}
     \label{fig:seq_diag}
 \end{figure}
 
@@ -484,8 +510,10 @@ The implementation is structured into five core python modules:
         \textbf{Filename} & \textbf{Purpose} & \textbf{Key Responsibilities} \\
         \midrule
         \texttt{2105032\_AES.py} & Core AES Cipher Engine & Key expansion, ECB/CBC modes, PKCS\#7 padding, lookup table. \\
+        \rowcolor{TableAccent}
         \texttt{2105032\_dh.py} & Public Key Generator & Miller-Rabin testing, safe primes, generator search. \\
         \texttt{2105032\_alice.py} & Sender / TCP Client & DH negotiation, AES key derivation, client transmission. \\
+        \rowcolor{TableAccent}
         \texttt{2105032\_bob.py} & Receiver / TCP Server & Server connection, DH key agreement, decryption, file output. \\
         \texttt{2105032\_image.py} & Image Encryption Utility & BMP structure preservation, ECB vs. CBC visual comparison. \\
         \bottomrule
@@ -543,8 +571,8 @@ To satisfy the requirements of Bonus Task B3, the key schedule was generalized. 
     \item \textbf{Generalizing key\_expansion}: The function dynamically determines the number of rounds $N_r$ and round constant parameters based on the input key length. For 256-bit keys ($N_k = 8$), an extra S-box substitution step (\texttt{SubWord}) is applied to intermediate words where $i \equiv 4 \pmod 8$.
 \end{itemize}
 
-\begin{tcolorbox}[colback=NavyBlue!5!white, colframe=NavyBlue!40, arc=2pt, boxrule=0.5pt, title={Production-Grade Key Derivation Note}]
-    \small \textbf{Real-World Key Derivation vs. Structural Padding:} In production-grade systems, keys of irregular lengths are not normalized using simple padding or truncation, as this reduces the overall entropy and weakens the cryptographic strength of the key. Instead, industry-standard systems leverage Key Derivation Functions (KDFs) such as \textbf{HKDF} (HMAC-based Extract-and-Expand Key Derivation Function) or password-stretching algorithms like \textbf{PBKDF2} or \textbf{Argon2}. These protocols securely stretch or compress inputs of any length to produce uniform, high-entropy 128, 192, or 256-bit keys suitable for symmetric block ciphers.
+\begin{tcolorbox}[colback=NavyBlue!4!white, colframe=NavyBlue!35, arc=4pt, boxrule=0.8pt, left=12pt, right=12pt, top=10pt, bottom=10pt, enhanced, drop shadow={NavyBlue!8}, title={\sffamily\bfseries\color{BoxTitle} Production-Grade Key Derivation Note}]
+    \small In production-grade systems, keys of irregular lengths are not normalized using simple padding or truncation, as this reduces the overall entropy and weakens the cryptographic strength of the key. Instead, industry-standard systems leverage Key Derivation Functions (KDFs) such as \textbf{HKDF} (HMAC-based Extract-and-Expand Key Derivation Function) or password-stretching algorithms like \textbf{PBKDF2} or \textbf{Argon2}. These protocols securely stretch or compress inputs of any length to produce uniform, high-entropy 128, 192, or 256-bit keys suitable for symmetric block ciphers.
 \end{tcolorbox}
 
 \subsubsection{Secure Session Key Derivation}
@@ -559,8 +587,8 @@ This ensures the key derivation is deterministic and produces a uniform 128-bit 
 The system uses standard TCP sockets to implement communication between Alice (Client) and Bob (Server). To prevent fragmentation issues over TCP streams, a structured messaging header is used.
 \begin{figure}[H]
     \centering
-    \begin{tcolorbox}[colframe=NavyBlue, colback=LightBG, title={Transmission Frame Structure}, halign=center]
-        \texttt{[Message Type: 4B] || [Filename Length: 4B] || [Filename: Var] || [Ciphertext Length: 10B] || [Payload]}
+    \begin{tcolorbox}[colframe=NavyBlue, colback=LightBG, arc=4pt, boxrule=1pt, left=8pt, right=8pt, top=8pt, bottom=8pt, enhanced, drop shadow={NavyBlue!15}, title={\sffamily\bfseries\color{BoxTitle} Transmission Frame Structure}, halign=center, fontupper=\ttfamily\small]
+        [Message Type: 4B] || [Filename Length: 4B] || [Filename: Var] || [Ciphertext Length: 10B] || [Payload]
     \end{tcolorbox}
     \caption{Socket stream boundary packet format.}
 \end{figure}
@@ -583,8 +611,8 @@ pixel_data = full_image_bytes[offset:]
 \end{lstlisting}
 The pixel data is extracted, encrypted, and then recombined with the original unencrypted header. This allows the encrypted image to be rendered by standard viewers.
 
-\begin{tcolorbox}[colback=NavyBlue!5!white, colframe=NavyBlue!40, arc=2pt, boxrule=0.5pt, title={Technical Disclaimer Note}]
-    \small \textbf{Note on Cryptographic Decryptability:} To ensure the encrypted \texttt{.bmp} files maintain identical structural boundaries and open seamlessly in standard image viewers, the ciphertext is sliced to match the original \texttt{pixel\_data} length. While this discards the PKCS\#7 padding bytes of the final block and renders the last 16-byte block technically un-decryptable, it is an intentional engineering trade-off made strictly for visual cryptanalysis purposes.
+\begin{tcolorbox}[colback=NavyBlue!4!white, colframe=NavyBlue!35, arc=4pt, boxrule=0.8pt, left=12pt, right=12pt, top=10pt, bottom=10pt, enhanced, drop shadow={NavyBlue!8}, title={\sffamily\bfseries\color{BoxTitle} Technical Disclaimer}]
+    \small To ensure the encrypted \texttt{.bmp} files maintain identical structural boundaries and open seamlessly in standard image viewers, the ciphertext is sliced to match the original \texttt{pixel\_data} length. While this discards the PKCS\#7 padding bytes of the final block and renders the last 16-byte block technically un-decryptable, it is an intentional engineering trade-off made strictly for visual cryptanalysis purposes.
 \end{tcolorbox}
 
 \newpage
@@ -605,10 +633,13 @@ Performance tests were conducted to measure execution times for the key schedule
         \textbf{Algorithm Configuration} & \textbf{Key Schedule (ms)} & \textbf{Encryption (ms)} & \textbf{Decryption (ms)} & \textbf{Throughput (KB/s)} \\
         \midrule
         \textbf{AES-128 / ECB} & 0.0585 & 0.1481 & 0.1363 & 108.04 \\
+        \rowcolor{TableAccent}
         \textbf{AES-128 / CBC} & 0.0531 & 0.2047 & 0.1394 & 78.16 \\
         \textbf{AES-192 / ECB} & 0.0750 & 0.3963 & 0.2667 & 40.37 \\
+        \rowcolor{TableAccent}
         \textbf{AES-192 / CBC} & 0.2322 & 0.3676 & 0.4847 & 43.53 \\
         \textbf{AES-256 / ECB} & 0.0736 & 0.3650 & 0.8316 & 43.84 \\
+        \rowcolor{TableAccent}
         \textbf{AES-256 / CBC} & 0.0678 & 1.7550 & 0.3152 & 9.12 \\
         \bottomrule
     \end{tabularx}
@@ -632,6 +663,7 @@ The Diffie-Hellman parameter generation benchmarks measure the time required to 
         \textbf{Key Size $k$ (bits)} & \textbf{Parameter Generation ($P, g$) (ms)} & \textbf{Alice Public Key ($A$) (ms)} & \textbf{Bob Public Key ($B$) (ms)} & \textbf{Shared Key ($s$) (ms)} \\
         \midrule
         \textbf{128} & 124.50 & 0.0365 & 0.0352 & 0.0695 \\
+        \rowcolor{TableAccent}
         \textbf{192} & 645.20 & 0.0766 & 0.0744 & 0.1654 \\
         \textbf{256} & 2315.80 & 0.1301 & 0.1284 & 0.2553 \\
         \bottomrule
@@ -658,18 +690,24 @@ Table~\ref{tab:lut_comparison} summarizes the timing improvements for encrypting
         \textbf{Configuration \& Step} & \textbf{Unoptimized Time (ms)} & \textbf{Optimized Time (ms)} & \textbf{Speedup Factor} \\
         \midrule
         \textbf{AES-128 / ECB (Encryption)} & 137.2394 & 0.1481 & 926.7$\times$ \\
+        \rowcolor{TableAccent}
         \textbf{AES-128 / ECB (Decryption)} & 161.3351 & 0.1363 & 1183.7$\times$ \\
         \textbf{AES-128 / CBC (Encryption)} & 145.1932 & 0.2047 & 709.3$\times$ \\
+        \rowcolor{TableAccent}
         \textbf{AES-128 / CBC (Decryption)} & 184.9432 & 0.1394 & 1326.7$\times$ \\
         \midrule
         \textbf{AES-192 / ECB (Encryption)} & 164.6770 & 0.3963 & 415.5$\times$ \\
+        \rowcolor{TableAccent}
         \textbf{AES-192 / ECB (Decryption)} & 202.8157 & 0.2667 & 760.5$\times$ \\
         \textbf{AES-192 / CBC (Encryption)} & 167.4061 & 0.3676 & 455.4$\times$ \\
+        \rowcolor{TableAccent}
         \textbf{AES-192 / CBC (Decryption)} & 202.9162 & 0.4847 & 418.6$\times$ \\
         \midrule
         \textbf{AES-256 / ECB (Encryption)} & 195.0931 & 0.3650 & 534.5$\times$ \\
+        \rowcolor{TableAccent}
         \textbf{AES-256 / ECB (Decryption)} & 233.1874 & 0.8316 & 280.4$\times$ \\
         \textbf{AES-256 / CBC (Encryption)} & 193.9785 & 1.7550 & 110.5$\times$ \\
+        \rowcolor{TableAccent}
         \textbf{AES-256 / CBC (Decryption)} & 226.7767 & 0.3152 & 719.5$\times$ \\
         \bottomrule
     \end{tabularx}
@@ -734,7 +772,7 @@ The visual results are shown in Figure~\ref{fig:visual_crypto}.
         \includegraphics[width=0.45\textwidth]{images/encrypted_ecb.png} &
         \includegraphics[width=0.45\textwidth]{images/encrypted_cbc.png}
     \end{tabular}
-    \caption{Visual representation of image data after encryption under ECB and CBC modes.}
+    \caption{Visual comparison of the BUET logo encrypted under ECB (left) and CBC (right) modes. ECB preserves structural outlines due to independent block encryption, while CBC produces pseudorandom output.}
     \label{fig:visual_crypto}
 \end{figure}
 
