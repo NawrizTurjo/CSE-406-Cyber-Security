@@ -3,3 +3,12 @@
 raw/
 __pycache__/
 *_evaluator_*
+
+# LaTeX auxiliary files (excluding .tex and .pdf)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
