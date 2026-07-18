@@ -1,0 +1,16 @@
+
+gef➤  p &(data->name)
+$1 = (char (*)[20]) 0x5655b700
+
+gef➤  p &(ptr->fp)
+$2 = (void (**)()) 0x5655b720
+
+gef➤  p (void *)&(ptr->fp) - (void *)&(data->name)
+$3 = 0x20
+
+gef➤  p/d (void *)&(ptr->fp) - (void *)&(data->name)
+$4 = 32
+
+gef➤  p hack
+$5 = {void ()} 0x5655626d <hack>
+

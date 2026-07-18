@@ -161,3 +161,87 @@ Offline-1-Crypto/
         CSE406_Assignment_v2.pdf  # Assignment specification version 2
         sampleio.png              # Sample illustration
 ```
+
+---
+
+## Online 1 — Buffer Overflow
+
+**Goal.** Understand and exploit stack-based buffer overflows, heap overflows, BSS/data overflows, and function chaining under varying system environments and security mitigations (e.g., ASLR, Stack Canaries, and non-executable stacks).
+
+### 1. Practice Materials & Lab Folders
+
+The practice and learning materials are organized within [Online-1-Buffer-Overflow](Online-1-Buffer-Overflow):
+
+*   **[0.online-class](Online-1-Buffer-Overflow/0.online-class)**: Lecture demonstrations, notes, and base configurations.
+*   **Ret2Win Series**: Exploits that overwrite the function return address to redirect control flow directly to a target win function (e.g., `win()`), without using shellcode.
+    *   **[1.Ret2Win](Online-1-Buffer-Overflow/1.Ret2Win)**: Basic Ret2Win scenario.
+    *   **[1.Ret2Win-gets](Online-1-Buffer-Overflow/1.Ret2Win-gets)**: Ret2Win with input read via `gets()`.
+    *   **[1.Ret2Win-v2](Online-1-Buffer-Overflow/1.Ret2Win-v2)**, **[v3](Online-1-Buffer-Overflow/1.Ret2Win-v3)**, **[v4](Online-1-Buffer-Overflow/1.Ret2Win-v4)**: Variations handling padding, stack structures, or parameters.
+    *   **[1.Ret2Win-x64](Online-1-Buffer-Overflow/1.Ret2Win-x64)**: 64-bit calling conventions and alignment requirements.
+*   **[2.DataOverflow](Online-1-Buffer-Overflow/2.DataOverflow)**: Demonstrates BSS/data segment overflow. By writing beyond the bounds of a global `username` buffer, we corrupt the adjacent `password` buffer to match a criteria (e.g., `"admin"`).
+*   **[3.HeapOverflow](Online-1-Buffer-Overflow/3.HeapOverflow)**: Demonstrates dynamic memory corruption. Modifying metadata or neighboring variables allocated adjacent to each other via `malloc()`.
+*   **[4.NOP-issues](Online-1-Buffer-Overflow/4.NOP-issues)**: Analyzes how compiler options, memory spaces, and environment variables affect addresses on the stack, heap, code, data, and BSS segments.
+*   **Inject2Win Series**: Injecting machine code (shellcode) into memory and executing it by overwriting the return address.
+    *   **[5.Inject2Win](Online-1-Buffer-Overflow/5.Inject2Win)**: Injecting shellcode onto stack and jumping directly to it (requires `-z execstack`).
+    *   **[5.Inject2Win-v2](Online-1-Buffer-Overflow/5.Inject2Win-v2)**, **[v3](Online-1-Buffer-Overflow/5.Inject2Win-v3)**: Evading NOP-sled limits or stack address alignment issues.
+*   **[templates](Online-1-Buffer-Overflow/templates)**: Starter code templates like [exploit_temp.py](Online-1-Buffer-Overflow/templates/exploit_temp.py) and setup guides in [important_cmds.txt](Online-1-Buffer-Overflow/templates/important_cmds.txt).
+
+### 2. Practice & Sample Onlines
+
+The directory [practice-Sample-Onlines](Online-1-Buffer-Overflow/practice-Sample-Onlines) contains task descriptions and solution implementations from past exams:
+
+*   **[Batch-16](Online-1-Buffer-Overflow/practice-Sample-Onlines/Batch-16)**: Tasks like Online 1 A1, A2, B1, B2, and corresponding solution scripts.
+*   **[Batch-18](Online-1-Buffer-Overflow/practice-Sample-Onlines/Batch-18)**: Tasks like Online 1 B1 and A1.
+
+*Typical challenge highlights:* Function chaining, where the target return address is redirected to `foo(a, b)` and then to `bar(x)` with specific arguments passed correctly via the stack.
+
+### 3. Exam Submission: A2 Buffer Overflow
+
+Located in [A2_Buffer_Overflow](Online-1-Buffer-Overflow/A2_Buffer_Overflow):
+
+#### Target Program Analysis ([target.c](Online-1-Buffer-Overflow/A2_Buffer_Overflow/target.c))
+*   **Buffer Size Calculation**: `BUF_SZ = 60 + STUDENT_ID = 60 + 32 = 92` bytes (for Student ID ending in `032`).
+*   **Vulnerability**: An unsafe `strcpy(buffer, str)` inside the `vuln(char *str)` function allows overflowing the `buffer`.
+*   **Exploitation Goals**:
+    1.  Divert control flow to the `unlock(int code)` function.
+    2.  Pass the required integer parameter `code` matching the macro `UNLOCK_CODE` (`0xA5A5A020`).
+    3.  Redirect `unlock()`'s return address to run the `get_reward()` function, which executes `system("/bin/sh")` to drop a root-shell.
+
+#### Exploit Payload Construction ([exploit.py](Online-1-Buffer-Overflow/A2_Buffer_Overflow/exploit.py))
+The exploit crafts the stack layout to chain `unlock()` and `get_reward()` together:
+1.  **Offset to return address**: `98` bytes.
+2.  **Chaining design**:
+    *   **Return Address**: Overwritten with the address of `unlock()` (`0x5655628d`).
+    *   **unlock's Return Address**: Overwritten with the address of `get_reward()` (`0x565562fb`).
+    *   **unlock's Parameter 1**: Placed after the return address space as `0xa5a5a01a` (calculated offset address/argument) to pass the code check validation.
+
+```
+Stack layout:
++-------------------+-------------------+--------------------+
+| buffer (92 bytes) | EBP copy (4 bytes)| Ret Addr: unlock() | <-- offset 98
++-------------------+-------------------+--------------------+
+| Ret: get_reward() | Arg 1: code       |                    |
++-------------------+-------------------+--------------------+
+```
+
+---
+
+### Command Cheat Sheet for Labs
+
+These standard environmental configurations and debugging techniques were used:
+
+```bash
+# Disable ASLR
+sudo sysctl -w kernel.randomize_va_space=0
+
+# Avoid shell privilege dropping (link /bin/sh to /bin/zsh)
+sudo ln -sf /bin/zsh /bin/sh
+
+# Compile without stack protection and with executable stack (for shellcode inject)
+gcc -m32 -o target -z execstack -fno-stack-protector target.c
+sudo chown root target
+sudo chmod 4755 target
+
+# Debugging offsets in GDB
+(gdb) p/d (void *)$ebp + 4 - (void *)&buffer  # Find return address offset
+```

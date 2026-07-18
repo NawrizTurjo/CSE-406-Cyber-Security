@@ -1,0 +1,53 @@
+# Login first. Make sure you are signed in your Azure student account with 100$ free credit in your default browser.
+az login
+
+# First create a resource group in eastasia region (I chose this one as it had tolerable latency).
+# A resource group is like a unit that holds all your VMs, disks, network interfaces together. Once you are done with your resources, instead of manually deleting each one by one, you can simply delete the whole resource group and stop all billing.
+az group create --name seed-rg --location eastasia
+
+
+
+# Since we are using Ubuntu server 20.04 LTS - gen1 for our labs, previously it was possible to find this OS image from the Azure web interface. (If you are curious, you can try with 22.04 or later Ubuntu versions, but I not sure if Ubuntu introduced additional security mechanisms that need to be considered for our attack. Do this at your own risk. Not recommended.)
+# But recently the 20.04 LTS version from the web interface is no longer available, so we are using azure command line interface to create the VM.
+# You can install azure CLI according to your OS by following this link: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+# Note the --genrate-ssh-keys in the following command: by default, it will create a key-pair named id_rsa and id_rsa.pub in ~/.ssh/ folder, assuming you are on linux/MacOS. If you are Windows, the path will likely be different but you'd have to adjust it during the connection process accordingly. You can use your custom keys as well, but for now it's not necessary.
+# Think of ssh key-pairs like your password for the VM. We will study more about this in our theory course.
+az vm create \
+  --resource-group seed-rg \
+  --name seed-vm \
+  --image Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest \
+  --security-type Standard \
+  --size Standard_D2s_v3 \
+  --admin-username seed \
+  --generate-ssh-keys \
+  --storage-sku StandardSSD_LRS \
+  --public-ip-sku Standard \
+  --location eastasia \
+  -o json 2>&1
+  
+  # Connect to VM: Replace IP_ADDR and PATH_TO_KEY accordingly.
+  # For windows, you may get a permission error with the key. Move the key to C:\Users\[Your_Username]\OneDrive\id_rsa and use that path here. That should fix the issue.
+  ssh -i PATH_TO_KEY -L 5901:localhost:5901 seed@IP_ADDR -v
+  
+
+# By default, this VM does not come with any GUI. We will install the GUI and some more tools (Wireshark. docker helpers, gdb peda, etc.) with the following commands:
+curl -o src-cloud.zip https://seed.nyc3.cdn.digitaloceanspaces.com/src-cloud.zip
+sudo apt update
+sudo apt -y install unzip
+unzip src-cloud.zip
+cd src-cloud/
+./install.sh
+
+# VNC setup process. This will only work once the previous installation completes properly.
+# When prompted for a password, remember it properly. You will need it for the tigervnc connection process. More details here: https://github.com/seed-labs/seed-labs/blob/master/manuals/cloud/seedvm-cloud.md#step-3-option-a-access-the-vm-using-vnc
+sudo su seed
+vncserver -localhost no
+
+
+# When prompted, use the following options.
+Wireshark → "should non-superusers be able to capture packets?" → select No
+xfce4 / display manager → choose LightDM
+
+
+# In case you want to delete your resource group and try again, run this:
+az group delete --name seed-rg --yes --no-wait

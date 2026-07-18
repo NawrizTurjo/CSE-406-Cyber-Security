@@ -1,0 +1,83 @@
+
+
+gef➤  p/d (void *)$ebp + 4 - (void *)&buffer
+$1 = 312
+
+gef➤  p (void *)$ebp + 8
+$2 = (void *) 0xffffcd60
+
+gef➤  p foo
+$3 = {int (int, int)} 0x56556286 <foo>
+
+2105032
+2,1
+21,0
+210,5
+2105,0
+21050, 3
+210503, 2
+asm code:
+
+xor eax, eax
+xor ecx, ecx
+mov ebx, 0x56556286
+
+inc eax
+inc eax
+
+inc ecx
+
+push ecx
+push eax
+call ebx
+
+xor ecx, ecx
+push ecx
+push eax
+mov ebx, 0x56556286
+call ebx
+
+xor ecx, ecx
+
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+inc ecx
+
+push ecx
+push eax
+
+mov ebx, 0x56556286
+call ebx
+
+xor ecx, ecx
+
+push ecx
+push eax
+
+mov ebx, 0x56556286
+call ebx
+
+xor ecx, ecx
+
+inc ecx
+inc ecx
+inc ecx
+
+push ecx
+push eax
+
+mov ebx, 0x56556286
+call ebx
+
+xor ecx, ecx
+
+inc ecx
+inc ecx
+
+push ecx
+push eax
+
+mov ebx, 0x56556286
+call ebx

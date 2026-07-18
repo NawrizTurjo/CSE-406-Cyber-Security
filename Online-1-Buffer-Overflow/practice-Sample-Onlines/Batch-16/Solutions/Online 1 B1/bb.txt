@@ -1,0 +1,16 @@
+
+gef➤  p/d (void *)$ebp + 4 - (void *)&buffer
+$1 = c
+
+gef➤  p (void *)$ebp + 8
+$2 = (void *) 0xffffd000
+
+gef➤  p (void *)$ebp + 4
+$3 = (void *) 0xffffcffc
+
+gef➤  p secret
+$4 = {int ()} 0x565562e5 <secret>
+
+mov ebx, 0x565562e5
+call ebx
+

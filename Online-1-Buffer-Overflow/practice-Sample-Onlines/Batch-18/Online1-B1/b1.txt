@@ -1,0 +1,14 @@
+gef➤  p &(data->name)
+$1 = (char (*)[20]) 0x5655b700
+gef➤  p &(ptr->fp)
+$2 = (void (**)()) 0x5655b720
+gef➤  p (void *) &(ptr->fp)
+$3 = (void *) 0x5655b720
+gef➤  p (void *) &(data->name)
+$4 = (void *) 0x5655b700
+gef➤  p/d (void *) &(ptr->fp) - (void *) &(data->name)
+$5 = 32
+gef➤  p hack
+$6 = {void ()} 0x5655626d <hack>
+
+[first 32 e NOP, then 4 byte e hack er address]
