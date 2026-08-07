@@ -3,6 +3,8 @@
 raw/
 __pycache__/
 *_evaluator_*
+server_*
+!server_windows*
 
 # LaTeX auxiliary files (excluding .tex and .pdf)
 *.aux

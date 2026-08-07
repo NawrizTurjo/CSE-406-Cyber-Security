@@ -1,0 +1,78 @@
+============================================================
+ Starting Timing Attack Exploit against http://127.0.0.1:5000/verify
+ Target Student ID : 032
+ Samples per guess : 5
+============================================================
+
+------------------------------------------------------------
+[*] Testing Position 1...
+	Candidate PIN: '0000' => AVG TIME: 9.67 ms
+	Candidate PIN: '1000' => AVG TIME: 16.00 ms
+	Candidate PIN: '2000' => AVG TIME: 19.67 ms
+	Candidate PIN: '3000' => AVG TIME: 9.77 ms
+	Candidate PIN: '4000' => AVG TIME: 16.31 ms
+	Candidate PIN: '5000' => AVG TIME: 16.26 ms
+	Candidate PIN: '6000' => AVG TIME: 10.88 ms
+	Candidate PIN: '7000' => AVG TIME: 10.61 ms
+	Candidate PIN: '8000' => AVG TIME: 16.05 ms
+	Candidate PIN: '9000' => AVG TIME: 33.05 ms
+[*] plot saved as results/05_position_1_timing_diagram.png
+[+] Append digit: '9'.
+[+] Prefix so far: '9'.
+------------------------------------------------------------
+
+------------------------------------------------------------
+[*] Testing Position 2...
+	Candidate PIN: '9000' => AVG TIME: 30.57 ms
+	Candidate PIN: '9100' => AVG TIME: 38.98 ms
+	Candidate PIN: '9200' => AVG TIME: 31.94 ms
+	Candidate PIN: '9300' => AVG TIME: 28.16 ms
+	Candidate PIN: '9400' => AVG TIME: 33.32 ms
+	Candidate PIN: '9500' => AVG TIME: 30.07 ms
+	Candidate PIN: '9600' => AVG TIME: 33.24 ms
+	Candidate PIN: '9700' => AVG TIME: 36.28 ms
+	Candidate PIN: '9800' => AVG TIME: 47.17 ms
+	Candidate PIN: '9900' => AVG TIME: 34.65 ms
+[*] plot saved as results/05_position_2_timing_diagram.png
+[+] Append digit: '8'.
+[+] Prefix so far: '98'.
+------------------------------------------------------------
+
+------------------------------------------------------------
+[*] Testing Position 3...
+	Candidate PIN: '9800' => AVG TIME: 47.51 ms
+	Candidate PIN: '9810' => AVG TIME: 49.08 ms
+	Candidate PIN: '9820' => AVG TIME: 51.09 ms
+	Candidate PIN: '9830' => AVG TIME: 52.34 ms
+	Candidate PIN: '9840' => AVG TIME: 40.92 ms
+	Candidate PIN: '9850' => AVG TIME: 49.96 ms
+	Candidate PIN: '9860' => AVG TIME: 49.65 ms
+	Candidate PIN: '9870' => AVG TIME: 51.15 ms
+	Candidate PIN: '9880' => AVG TIME: 51.65 ms
+	Candidate PIN: '9890' => AVG TIME: 63.21 ms
+[*] plot saved as results/05_position_3_timing_diagram.png
+[+] Append digit: '9'.
+[+] Prefix so far: '989'.
+------------------------------------------------------------
+
+------------------------------------------------------------
+[*] Testing Position 4...
+	Candidate PIN: '9890' => AVG TIME: 69.26 ms
+	Candidate PIN: '9891' => AVG TIME: 62.81 ms
+	Candidate PIN: '9892' => AVG TIME: 83.72 ms
+	Candidate PIN: '9893' => AVG TIME: 63.08 ms
+	Candidate PIN: '9894' => AVG TIME: 60.01 ms
+	Candidate PIN: '9895' => AVG TIME: 63.55 ms
+	Candidate PIN: '9896' => AVG TIME: 66.70 ms
+	Candidate PIN: '9897' => AVG TIME: 62.56 ms
+	Candidate PIN: '9898' => AVG TIME: 58.63 ms
+	Candidate PIN: '9899' => AVG TIME: 64.03 ms
+[*] plot saved as results/05_position_4_timing_diagram.png
+[+] Append digit: '2'.
+[+] Prefix so far: '9892'.
+[+] HTTP 200 OK detected at candidate: '9892'
+[*] Verifying recovered PIN with server...
+
+============================================================
+[+] VERIFIED! Recovered PIN: 9892
+============================================================

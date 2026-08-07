@@ -1,7 +1,5 @@
 # CSE 406 — Cyber Security
 
-Repo for the CSE 406 coursework assignments.
-
 ---
 
 ## Offline 1 — Cryptography (Diffie-Hellman + AES)
@@ -145,6 +143,13 @@ python 2105032_alice.py
 python 2105032_image.py
 ```
 
+### Report
+
+A full write-up (design, output samples, timing tables, bonus
+results) is compiled at
+[`report/Offline-1-AES-2105032.pdf`](Offline-1-Crypto/report/Offline-1-AES-2105032.pdf)
+(LaTeX source alongside it).
+
 ### File layout
 
 ```
@@ -156,6 +161,11 @@ Offline-1-Crypto/
         2105032_bob.py           # Task 3: Bob TCP Server (Receiver)
         2105032_alice.py         # Task 3: Alice TCP Client (Sender)
         2105032_image.py         # Bonus: ECB vs CBC pixel encryption for BMP images
+    sub/
+        2105032_*.py, aes-x.py, 2105032_bonus_image.py  # Frozen copy of the files as zipped/submitted, plus sample run artifacts (encrypted/decrypted BMPs, received files)
+    report/
+        Offline-1-AES-2105032.pdf / .tex   # Compiled write-up + LaTeX source
+        images/                            # Figures embedded in the report (ECB vs CBC screenshots, logo)
     res/
         CSE406_Assignment1_v1.pdf # Assignment specification version 1
         CSE406_Assignment_v2.pdf  # Assignment specification version 2
@@ -195,11 +205,15 @@ The directory [practice-Sample-Onlines](Online-1-Buffer-Overflow/practice-Sample
 
 *Typical challenge highlights:* Function chaining, where the target return address is redirected to `foo(a, b)` and then to `bar(x)` with specific arguments passed correctly via the stack.
 
-### 3. Exam Submission: A2 Buffer Overflow
+### 3. Exam Submissions
 
-Located in [A2_Buffer_Overflow](Online-1-Buffer-Overflow/A2_Buffer_Overflow):
+Timed/graded buffer-overflow challenges, each with its own vulnerable
+`target.c` (compiled with student-ID-dependent buffer sizes) and a
+solving `exploit.py` that writes a `badfile` consumed by the target.
 
-#### Target Program Analysis ([target.c](Online-1-Buffer-Overflow/A2_Buffer_Overflow/target.c))
+#### A2 — Function chaining ([A2_Buffer_Overflow](Online-1-Buffer-Overflow/A2_Buffer_Overflow))
+
+##### Target Program Analysis ([target.c](Online-1-Buffer-Overflow/A2_Buffer_Overflow/target.c))
 *   **Buffer Size Calculation**: `BUF_SZ = 60 + STUDENT_ID = 60 + 32 = 92` bytes (for Student ID ending in `032`).
 *   **Vulnerability**: An unsafe `strcpy(buffer, str)` inside the `vuln(char *str)` function allows overflowing the `buffer`.
 *   **Exploitation Goals**:
@@ -207,7 +221,7 @@ Located in [A2_Buffer_Overflow](Online-1-Buffer-Overflow/A2_Buffer_Overflow):
     2.  Pass the required integer parameter `code` matching the macro `UNLOCK_CODE` (`0xA5A5A020`).
     3.  Redirect `unlock()`'s return address to run the `get_reward()` function, which executes `system("/bin/sh")` to drop a root-shell.
 
-#### Exploit Payload Construction ([exploit.py](Online-1-Buffer-Overflow/A2_Buffer_Overflow/exploit.py))
+##### Exploit Payload Construction ([exploit.py](Online-1-Buffer-Overflow/A2_Buffer_Overflow/exploit.py))
 The exploit crafts the stack layout to chain `unlock()` and `get_reward()` together:
 1.  **Offset to return address**: `98` bytes.
 2.  **Chaining design**:
@@ -223,6 +237,33 @@ Stack layout:
 | Ret: get_reward() | Arg 1: code       |                    |
 +-------------------+-------------------+--------------------+
 ```
+
+Verified working — see [`terminal-output.png`](Online-1-Buffer-Overflow/A2_Buffer_Overflow/terminal-output.png).
+
+#### C1 — Stack shellcode injection ([C1_Buffer_Overflow](Online-1-Buffer-Overflow/C1_Buffer_Overflow))
+
+##### Target Program Analysis ([target.c](Online-1-Buffer-Overflow/C1_Buffer_Overflow/target.c))
+*   **Buffer Size Calculation**: `BUF_SZ = 100 + STUDENT_ID = 100 + 32 = 132` bytes, read via `READ_SZ = BUF_SZ + 300 = 432` bytes from `badfile`.
+*   **Vulnerability**: `strcpy(buffer, str)` inside `process(char *str)` overflows the stack buffer with attacker-controlled, unbounded input.
+*   **Exploitation Goal**: No `win()`-style helper is provided, so control flow must be redirected directly into injected shellcode (classic ret-to-shellcode).
+
+##### Exploit Payload Construction ([exploit.py](Online-1-Buffer-Overflow/C1_Buffer_Overflow/exploit.py))
+*   A standard 11-byte `execve("/bin/sh")` shellcode is placed at the **end** of the payload.
+*   A large NOP (`0x90`) sled fills the rest of the buffer so the return address doesn't need to land precisely.
+*   The saved return address (offset `144`, i.e. `ebp+4-&buffer` found via GDB) is overwritten with a stack address inside the NOP sled (`ebp_8 + NOPs`), landing execution somewhere in the sled and sliding into the shellcode.
+*   Verified working — see [`C1-successful-run.png`](Online-1-Buffer-Overflow/C1_Buffer_Overflow/C1-successful-run.png).
+
+#### C2 — Heap function-pointer overwrite ([C2_Buffer_Overflow](Online-1-Buffer-Overflow/C2_Buffer_Overflow))
+
+##### Target Program Analysis ([target.c](Online-1-Buffer-Overflow/C2_Buffer_Overflow/target.c))
+*   **Buffer Size Calculation**: `DATA_SZ = 24 + STUDENT_ID % 16 = 24 + 0 = 24` bytes for a heap-allocated `UserData.name`, read via `READ_SZ = DATA_SZ + 100` bytes.
+*   **Vulnerability**: `fread` into `user->name` (a `malloc`'d struct) overflows onto the heap; a second, separately-`malloc`'d `Handler` struct holding a function pointer (`handler->action`) sits in a predictable spot relative to it.
+*   **Exploitation Goal**: Corrupt `handler->action` so that when the program calls `handler->action()`, control transfers to `secret_action()` (which runs `system("/bin/sh")`) instead of the intended `safe_action()`.
+
+##### Exploit Payload Construction ([exploit.py](Online-1-Buffer-Overflow/C2_Buffer_Overflow/exploit.py))
+*   No shellcode injection is needed — the target already contains a "win" function (`secret_action`), so the exploit only needs to overwrite a pointer.
+*   The payload is `total_ln = 52` bytes; at offset `48` (determined via GDB by inspecting heap layout/chunk alignment), the 4-byte address of `secret_action` (`0x565561f8`) is written to clobber `handler->action`.
+*   Verified working — see [`C2-Successful-run.png`](Online-1-Buffer-Overflow/C2_Buffer_Overflow/C2-Successful-run.png).
 
 ---
 
@@ -244,4 +285,85 @@ sudo chmod 4755 target
 
 # Debugging offsets in GDB
 (gdb) p/d (void *)$ebp + 4 - (void *)&buffer  # Find return address offset
+```
+
+---
+
+## Offline 2 — Side-Channel Timing Attack
+
+**Goal.** Simulate a remote timing side-channel attack against a
+black-box authentication server that compares a submitted PIN
+character-by-character (short-circuiting on the first mismatch).
+By measuring HTTP response latency over many samples, recover a
+student-specific secret 4-digit PIN one digit at a time — without
+reversing the server binary.
+
+The full task statement is in
+[`Side_Channel_Timing_Attack_Assignment.docx.pdf`](Offline-2-Side-Channel-Attack/res/Side_Channel_Timing_Attack_Assignment.docx.pdf).
+
+### Attack at a glance
+
+```
+for each PIN position (1..4):
+    for each candidate digit d in '0'..'9':
+        pad candidate = known_prefix + d + zeros
+        send SAMPLES_PER_GUESS requests to /verify, average elapsed ms
+    pick digit with the timing spike (slowest average = longest matching prefix)
+    append it to known_prefix
+    stop early if server responds HTTP 200 (full PIN correct)
+```
+
+### Implementation ([2105032.py](Offline-2-Side-Channel-Attack/2105032/2105032.py))
+
+- Target endpoint: `POST http://127.0.0.1:5000/verify` with JSON body
+  `{"pin": candidate}` and header `X-Student-ID: 032`.
+- `measure_response_time` — times a single request with
+  `time.perf_counter()`, returns elapsed ms and HTTP status.
+- `get_average_timing` — repeats a candidate PIN `SAMPLES_PER_GUESS`
+  times (default 100) and averages elapsed time to smooth out system
+  jitter; also flags success on any HTTP 200 response.
+- `recover_secret_pin` — for each of the 4 positions, tries all 10
+  digits padded with trailing zeros, records the average timing for
+  each, and greedily commits to the slowest (highest-latency)
+  candidate as the correct digit for that position. Terminates early
+  the moment a full guess returns HTTP 200, then re-verifies the
+  recovered PIN once more.
+- `plot_timings` — renders a horizontal bar chart (via `matplotlib`)
+  of average response time per candidate digit for each position and
+  saves it under `results/`.
+
+### Results
+
+`results/` contains repeated attack runs at increasing sample counts
+(`01`, `02`, `03`, `04`, `05`, `10`, `32`, `50`, `100` samples per
+guess) — each with a `<n>_result.txt` transcript and one
+`<n>_position_<k>_timing_diagram.png` bar chart per PIN position.
+Higher sample counts produce a cleaner, more distinct timing spike;
+at 100 samples/guess the recovered PIN (`9892`) is verified
+successfully with a clear latency gap between the correct and
+incorrect digits at every position.
+
+### How to run it
+
+```bash
+# 1. Start the provided black-box target server (matches your OS)
+cd Offline-2-Side-Channel-Attack/res
+./server_linux        # or server_mac / server_windows.exe
+
+# 2. In another terminal, run the timing-attack exploit
+cd Offline-2-Side-Channel-Attack/2105032
+python 2105032.py
+```
+
+### File layout
+
+```
+Offline-2-Side-Channel-Attack/
+    2105032/
+        2105032.py                # Timing-attack exploit (averaging, digit recovery, plotting)
+        results/                  # result.txt transcripts + timing-diagram PNGs per sample count
+    res/
+        Side_Channel_Timing_Attack_Assignment.docx.pdf  # Assignment specification
+        template.py                                     # Provided starter template
+        server_linux / server_mac / server_windows.exe   # Black-box target server binaries (gitignored)
 ```
