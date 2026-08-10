@@ -6,14 +6,14 @@ import os
 
 # Target configuration
 URL = "http://127.0.0.1:5000/verify"
-STUDENT_ID = "032"  # TODO: Put your student id (last 3 digits)
+STUDENT_ID = "098"  # TODO: Put your student id (last 3 digits)
 HEADERS = {"X-Student-ID": STUDENT_ID, "Content-Type": "application/json"}
 
 # Attack configuration parameters
 PIN_LENGTH = 4
-SAMPLES_PER_GUESS = 5  # Number of samples per digit to average out noise
+SAMPLES_PER_GUESS = 1  # Number of samples per digit to average out noise
 DIGITS = "0123456789"
-COLLECT_ALL_DATA = True
+COLLECT_ALL_DATA = False
 
 
 def measure_response_time(candidate_pin: str) -> float:
