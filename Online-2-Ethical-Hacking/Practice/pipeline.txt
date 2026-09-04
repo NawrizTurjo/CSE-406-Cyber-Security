@@ -337,3 +337,6 @@ UPDATE member m SET last_name = CONCAT(
 ) 
 ; 
 -- -
+
+
+rahman-41'; DELETE FROM log WHERE submitted_id = 4100001; -- -
