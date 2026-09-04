@@ -64,3 +64,6 @@ _region_.*
 *.sta
 *.upa
 *.upb
+
+*images.tar
+SHA*

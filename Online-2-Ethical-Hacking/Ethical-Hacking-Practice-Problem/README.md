@@ -29,11 +29,11 @@ You'll also need on your own machine:
 - Node.js (any recent version) — used only to generate seed data, not to
   run the apps themselves
 
-## Setup Options
-
-### Option 1: Docker Setup (Recommended)
+## Setup
 
 ```bash
+git clone <this-repo-url>
+cd ethicalHackingDemonstration
 node scripts/generate-seed-sql.js
 docker compose up --build
 ```
@@ -52,75 +52,6 @@ docker compose down
 node scripts/generate-seed-sql.js   # optional: rerolls everyone's CGPA
 docker compose up --build
 ```
-
----
-
-### Option 2: Manual Setup (Without Docker)
-
-Follow these steps to run MySQL and the Node.js application servers natively on your host machine.
-
-#### Step 1: Install & Start MySQL Server
-Ensure you have MySQL Server (MySQL 8.0, MariaDB, or XAMPP) installed and running locally on port `3306`.
-
-#### Step 2: Install Node.js Dependencies
-In the root directory of the project, run:
-```bash
-npm install
-```
-
-#### Step 3: Generate & Import Seed Data into MySQL
-1. Run the seed generation script to create the SQL database initialization files:
-   ```bash
-   npm run generate-seed
-   ```
-   *(This generates `mysql-init/01-result-schema.sql` and `mysql-init/02-social-schema.sql`)*
-
-2. Import the initialization scripts into your local MySQL server:
-   ```bash
-   mysql -u root -p < mysql-init/00-init.sql
-   mysql -u root -p < mysql-init/01-result-schema.sql
-   mysql -u root -p < mysql-init/02-social-schema.sql
-   ```
-   *(Alternatively, open and execute `00-init.sql`, `01-result-schema.sql`, and `02-social-schema.sql` in order using a MySQL GUI client like MySQL Workbench, phpMyAdmin, or DBeaver).*
-
-#### Step 4: Start the Node.js Applications
-By default, the apps look for database host `MYSQL_HOST=mysql`, `MYSQL_USER=appuser`, `MYSQL_PASSWORD=apppassword`. For local manual setup, set `MYSQL_HOST=localhost`.
-
-Open **two separate terminal windows** in the project root:
-
-- **Terminal 1: Start Result Site (Port 3000)**
-  - **Windows (PowerShell):**
-    ```powershell
-    $env:MYSQL_HOST="localhost"; npm run start:result
-    ```
-  - **Windows (CMD):**
-    ```cmd
-    set MYSQL_HOST=localhost && npm run start:result
-    ```
-  - **Linux / macOS / Git Bash:**
-    ```bash
-    MYSQL_HOST=localhost npm run start:result
-    ```
-
-- **Terminal 2: Start Social Media Site (Port 3001)**
-  - **Windows (PowerShell):**
-    ```powershell
-    $env:MYSQL_HOST="localhost"; npm run start:social
-    ```
-  - **Windows (CMD):**
-    ```cmd
-    set MYSQL_HOST=localhost && npm run start:social
-    ```
-  - **Linux / macOS / Git Bash:**
-    ```bash
-    MYSQL_HOST=localhost npm run start:social
-    ```
-
-*(Note: If your local MySQL instance uses different credentials instead of `appuser`/`apppassword`, set `MYSQL_USER` and `MYSQL_PASSWORD` environment variables accordingly, e.g. `$env:MYSQL_USER="root"; $env:MYSQL_PASSWORD="yourpassword"`).*
-
-Once started, access the web applications:
-- **Result site:** http://localhost:3000
-- **Social Media site:** http://localhost:3001
 
 ## Credentials
 

