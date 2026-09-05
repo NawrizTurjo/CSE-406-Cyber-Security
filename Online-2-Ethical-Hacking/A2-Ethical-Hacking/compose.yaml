@@ -1,0 +1,41 @@
+name: cse406-a2
+
+services:
+  mysql:
+    image: cse406-a2-db:2026.1
+    pull_policy: never
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+
+  app1:
+    image: cse406-a2-loan:2026.1
+    pull_policy: never
+    ports:
+      - "7000:7000"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  app2:
+    image: cse406-a2-chat:2026.1
+    pull_policy: never
+    ports:
+      - "7001:7001"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    depends_on:
+      mysql:
+        condition: service_healthy

