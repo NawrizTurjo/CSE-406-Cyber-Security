@@ -289,3 +289,46 @@ The timing side-channel attack successfully recovered the secret PIN `9892` for 
 - Completed in a single automated run with verification
 
 The attack highlights that cryptographic strength alone is insufficient — implementation details like string comparison order and early-exit logic can leak secret information through observable side channels, even across a loopback network interface.
+
+---
+
+## 9. How to Run It
+
+```bash
+# 1. Start the provided black-box target server (matches your operating system)
+cd Offline-2-Side-Channel-Attack/res
+./server_linux        # on Linux
+# or ./server_mac     # on macOS
+# or .\server_windows.exe # on Windows
+
+# 2. In another terminal, run the timing-attack exploit
+cd Offline-2-Side-Channel-Attack/2105032
+python 2105032.py
+```
+
+---
+
+## 10. File Layout
+
+```
+Offline-2-Side-Channel-Attack/
+├── readme.md                           # Comprehensive documentation (this file)
+├── 2105032/                            # Active student implementation
+│   ├── 2105032.py                      # Timing-attack exploit (averaging, digit recovery, plotting)
+│   └── results/                        # Transcripts (<n>_result.txt) & bar charts (<n>_position_<k>_timing_diagram.png)
+├── all-test/                           # Test suite & comparative validation scripts
+│   └── all_test.py                     # Automated testing harness
+└── res/                                # Target binaries and assignment materials
+    ├── Side_Channel_Timing_Attack_Assignment.docx.pdf  # Assignment specification
+    ├── template.py                     # Provided starter template
+    └── server_linux / server_mac / server_windows.exe   # Black-box target server binaries
+```
+
+---
+
+<div align="center">
+
+*CSE 406 · Cyber Security Sessional · BUET · January 2026*
+
+</div>
+
